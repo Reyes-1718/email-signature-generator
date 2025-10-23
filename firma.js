@@ -19,7 +19,11 @@ let socials = {
   github: {
     url: 'https://github.com/tu-usuario',
     icon: 'icon/github-logo.png'
-  } 
+  },
+  whatsapp: {
+    url: 'https://wa.me/1234567890',
+    icon: 'icon/whatsapp.png'
+  }
 }
 
 // Variables globales para la firma
@@ -239,6 +243,7 @@ function resetearFormulario() {
         document.getElementById('twitterUrl').value = 'https://twitter.com/tu-usuario';
         document.getElementById('linkedinUrl').value = 'https://linkedin.com/in/tu-perfil';
         document.getElementById('githubUrl').value = 'https://github.com/tu-usuario';
+        document.getElementById('whatsappUrl').value = 'https://wa.me/1234567890';
         
         // Marcar todos los checkboxes
         Object.keys(socials).forEach(social => {
