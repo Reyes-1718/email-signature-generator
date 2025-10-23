@@ -1,23 +1,23 @@
 let socials = {
   facebook: {
     url: 'https://ed.team/facebook',
-    icon: 'https://drupal.ed.team/sites/default/files/social-icons/facebook-icon.png'
+    icon: 'C:\\Users\\Reyes\\Documents\\data\\Firma de correo\\icon\\facebook.png'
   } ,
   youtube: {
     url: 'https://ed.team/youtube',
-    icon: 'https://drupal.ed.team/sites/default/files/social-icons/youtube-icon.png'
+    icon: 'C:\\Users\\Reyes\\Documents\\data\\Firma de correo\\icon\\youtube.png'
   },
   twitter: { 
     url: 'https://ed.team/twitter',
-    icon: 'https://drupal.ed.team/sites/default/files/social-icons/twitter-icon.png'
+    icon: 'C:\\Users\\Reyes\\Documents\\data\\Firma de correo\\icon\\twitter.png'
   },
   linkedin: {
     url: 'https://ed.team/linkedin',
-    icon: 'https://drupal.ed.team/sites/default/files/social-icons/linkedin-icon.png'
+    icon: 'C:\\Users\\Reyes\\Documents\\data\\Firma de correo\\icon\\linkedin.png'
   },
   github: {
     url: 'https://ed.team/github',
-    icon: 'https://drupal.ed.team/sites/default/files/social-icons/github-icon.png'
+    icon: 'C:\\Users\\Reyes\\Documents\\data\\Firma de correo\\icon\\github.png'
   } 
 }
 
