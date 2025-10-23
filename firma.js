@@ -28,12 +28,12 @@ let socials = {
 
 // Variables globales para la firma
 let currentSignatureData = {
-    nombre: 'Jose Luis Reyes Gil',
-    titulo: 'Estudiante de licenciatura en Informática',
+    nombre: '',
+    titulo: '',
     empresa: '',
     telefono: '',
     email: '',
-    website: 'pagina web',
+    website: '',
     foto: 'perfil_foto/IMG_2542.JPEG',
     colorPrincipal: '#25C9FF',
     colorTexto: '#282d31'
