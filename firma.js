@@ -139,6 +139,9 @@ function manejarArchivoImagen(file) {
                 imagenPrevia.src = imagenUrl;
             }
             
+            // Actualizar estado con mensaje de éxito para archivo
+            actualizarEstadoImagen('✅ Archivo subido correctamente', 'success');
+            
             actualizarVistaPrevia();
         };
         reader.readAsDataURL(file);
@@ -147,14 +150,26 @@ function manejarArchivoImagen(file) {
     }
 }
 
-// Función para actualizar la vista previa de la imagen
-function actualizarVistaPreviewImagen(url) {
-    const imagenPrevia = document.getElementById('imagenPrevia');
-    if (imagenPrevia && url) {
-        imagenPrevia.src = url;
-        imagenPrevia.onerror = function() {
-            this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik00MCA1NkM0OC44MzY2IDU2IDU2IDQ4LjgzNjYgNTYgNDBDNTYgMzEuMTYzNCA0OC44MzY2IDI0IDQwIDI0QzMxLjE2MzQgMjQgMjQgMzEuMTYzNCAyNCA0MEMyNCA0OC44MzY2IDMxLjE2MzQgNTYgNDAgNTZaIiBmaWxsPSIjREREREREIi8+CjxwYXRoIGQ9Ik00MCA0NEMzNy43OTA5IDQ0IDM2IDQyLjIwOTEgMzYgNDBDMzYgMzcuNzkwOSAzNy43OTA5IDM2IDQwIDM2QzQyLjIwOTEgMzYgNDQgMzcuNzkwOSA0NCA0MEM0NCA0Mi4yMDkxIDQyLjIwOTEgNDQgNDAgNDRaIiBmaWxsPSIjQkJCQkJCIi8+Cjwvc3ZnPgo=';
+// Función para actualizar el estado de la imagen
+function actualizarEstadoImagen(mensaje, tipo = 'info') {
+    const estadoElement = document.getElementById('estadoImagen');
+    if (estadoElement) {
+        const colores = {
+            'success': '#4caf50',
+            'error': '#f44336',
+            'warning': '#ff9800',
+            'info': '#2196f3'
         };
+        estadoElement.innerHTML = mensaje;
+        estadoElement.style.color = colores[tipo] || colores.info;
+    }
+}
+
+// Función para abrir el selector de archivos
+function abrirSelectorArchivo() {
+    const archivoInput = document.getElementById('archivoFoto');
+    if (archivoInput) {
+        archivoInput.click();
     }
 }
 
@@ -172,37 +187,8 @@ function agregarEventListeners() {
         }
     });
     
-    // Campo de foto URL con vista previa
-    const fotoInput = document.getElementById('foto');
-    if (fotoInput) {
-        fotoInput.addEventListener('input', (e) => {
-            currentSignatureData.foto = e.target.value;
-            actualizarVistaPreviewImagen(e.target.value);
-            actualizarVistaPrevia();
-        });
-    }
-    
-    // Radio buttons para tipo de foto
-    const radioUrl = document.getElementById('fotoUrl');
-    const radioArchivo = document.getElementById('fotoArchivo');
-    const urlContainer = document.getElementById('urlFotoContainer');
-    const archivoContainer = document.getElementById('archivoFotoContainer');
-    
-    if (radioUrl && radioArchivo && urlContainer && archivoContainer) {
-        radioUrl.addEventListener('change', function() {
-            if (this.checked) {
-                urlContainer.style.display = 'block';
-                archivoContainer.style.display = 'none';
-            }
-        });
-        
-        radioArchivo.addEventListener('change', function() {
-            if (this.checked) {
-                urlContainer.style.display = 'none';
-                archivoContainer.style.display = 'block';
-            }
-        });
-    }
+    // Ya no necesitamos manejar campos URL de foto
+    // Solo manejamos la subida de archivos
     
     // Input de archivo
     const archivoFoto = document.getElementById('archivoFoto');
@@ -269,11 +255,6 @@ function agregarEventListeners() {
             
             const files = e.dataTransfer.files;
             if (files.length > 0) {
-                // Cambiar a modo archivo
-                document.getElementById('fotoArchivo').checked = true;
-                document.getElementById('urlFotoContainer').style.display = 'none';
-                document.getElementById('archivoFotoContainer').style.display = 'block';
-                
                 manejarArchivoImagen(files[0]);
             }
         });
@@ -352,28 +333,26 @@ function descargarFirma() {
 function resetearFormulario() {
     if (confirm('¿Estás seguro de que quieres resetear todos los campos?')) {
         // Resetear valores por defecto
-        document.getElementById('nombre').value = 'Jose Luis Reyes Gil';
-        document.getElementById('titulo').value = 'Estudiante de licenciatura en Informática';
+        document.getElementById('nombre').value = '';
+        document.getElementById('titulo').value = '';
         document.getElementById('empresa').value = '';
         document.getElementById('telefono').value = '';
         document.getElementById('email').value = '';
-        document.getElementById('website').value = 'pagina web';
+        document.getElementById('website').value = '';
         document.getElementById('foto').value = 'perfil_foto/IMG_2542.JPEG';
         document.getElementById('colorPrincipal').value = '#25C9FF';
         document.getElementById('colorTexto').value = '#282d31';
-        
-        // Resetear tipo de foto a URL
-        document.getElementById('fotoUrl').checked = true;
-        document.getElementById('fotoArchivo').checked = false;
-        document.getElementById('urlFotoContainer').style.display = 'block';
-        document.getElementById('archivoFotoContainer').style.display = 'none';
         
         // Resetear archivo de foto
         const archivoFoto = document.getElementById('archivoFoto');
         if (archivoFoto) archivoFoto.value = '';
         
-        // Resetear vista previa de imagen
-        actualizarVistaPreviewImagen('perfil_foto/IMG_2542.JPEG');
+        // Resetear vista previa de imagen a la imagen por defecto
+        const imagenPrevia = document.getElementById('imagenPrevia');
+        if (imagenPrevia) {
+            imagenPrevia.src = 'perfil_foto/IMG_2542.JPEG';
+        }
+        actualizarEstadoImagen('✅ Imagen por defecto cargada', 'success');
         
         // Resetear URLs de redes sociales
         document.getElementById('facebookUrl').value = 'https://facebook.com/tu-perfil';
@@ -391,12 +370,12 @@ function resetearFormulario() {
         
         // Actualizar datos globales
         currentSignatureData = {
-            nombre: 'Jose Luis Reyes Gil',
-            titulo: 'Estudiante de licenciatura en Informática',
+            nombre: '',
+            titulo: '',
             empresa: '',
             telefono: '',
             email: '',
-            website: 'pagina web',
+            website: '',
             foto: 'perfil_foto/IMG_2542.JPEG',
             colorPrincipal: '#25C9FF',
             colorTexto: '#282d31'

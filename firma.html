@@ -192,6 +192,127 @@
             cursor: pointer;
         }
         
+        .btn-foto {
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            color: #555;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        .btn-foto:hover {
+            border-color: #25C9FF;
+            color: #25C9FF;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 201, 255, 0.2);
+        }
+        
+        .btn-foto.active {
+            border-color: #25C9FF;
+            background: #25C9FF;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 201, 255, 0.3);
+        }
+        
+        .btn-foto.active:hover {
+            background: #1A9FD9;
+            border-color: #1A9FD9;
+        }
+        
+        .btn-foto-solo {
+            width: 100%;
+            padding: 16px 24px;
+            border: 2px solid #4caf50;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-foto-solo::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-foto-solo:hover::before {
+            left: 100%;
+        }
+        
+        .btn-foto-solo:hover {
+            background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%);
+            border-color: #45a049;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4);
+        }
+        
+        .icono-subir {
+            font-size: 20px;
+            display: inline-block;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-4px);
+            }
+            60% {
+                transform: translateY(-2px);
+            }
+        }
+        
+        .icono-camara {
+            display: inline-block;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        #vistaFoto:hover {
+            border-color: #1976d2 !important;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(37, 201, 255, 0.2);
+        }
+        
         @media (max-width: 768px) {
             .main-content {
                 grid-template-columns: 1fr;
@@ -203,6 +324,24 @@
             
             .container {
                 margin: 10px;
+            }
+            
+            .btn-foto {
+                font-size: 13px;
+                padding: 10px 16px;
+                flex-direction: column;
+                gap: 3px;
+            }
+            
+            .btn-foto-solo {
+                font-size: 14px;
+                padding: 14px 20px;
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .icono-subir {
+                font-size: 18px;
             }
         }
     </style>
@@ -250,22 +389,28 @@
                 
                 <div class="form-group">
                     <label>📸 Foto de Perfil</label>
-                    <div style="margin-bottom: 10px;">
-                        <input type="radio" id="fotoUrl" name="tipoFoto" value="url" checked style="margin-right: 5px;">
-                        <label for="fotoUrl" style="display: inline; font-weight: normal;">Usar URL de imagen</label>
-                        <input type="radio" id="fotoArchivo" name="tipoFoto" value="archivo" style="margin-left: 15px; margin-right: 5px;">
-                        <label for="fotoArchivo" style="display: inline; font-weight: normal;">Subir archivo</label>
+                    <div style="margin-bottom: 15px;">
+                        <button type="button" id="btnFotoArchivo" class="btn-foto-solo" onclick="abrirSelectorArchivo()">
+                            <span class="icono-subir">📤</span>
+                            Seleccionar imagen desde tu computadora
+                        </button>
                     </div>
-                    <div id="urlFotoContainer">
-                        <input type="url" id="foto" placeholder="URL de la imagen (ej: https://ejemplo.com/foto.jpg)" value="perfil_foto/IMG_2542.JPEG" style="margin-bottom: 10px;">
+                    <div id="archivoFotoContainer">
+                        <input type="file" id="archivoFoto" accept="image/*" style="display: none;">
+                        <div style="background: #e8f5e8; padding: 12px; border-radius: 6px; margin-bottom: 15px; font-size: 13px; text-align: center;">
+                            <strong>💡 Instrucciones:</strong>
+                            <br>• Haz clic en el botón verde para seleccionar una imagen
+                            <br>• También puedes arrastrar y soltar una imagen en el área de abajo
+                            <br>• <strong>Formatos soportados:</strong> JPG, PNG, GIF, WebP
+                        </div>
                     </div>
-                    <div id="archivoFotoContainer" style="display: none;">
-                        <input type="file" id="archivoFoto" accept="image/*" style="margin-bottom: 10px;">
-                        <small style="color: #666; display: block;">Formatos soportados: JPG, PNG, GIF, WebP</small>
-                    </div>
-                    <div id="vistaFoto" style="margin-top: 10px; padding: 10px; border: 1px dashed #ccc; border-radius: 5px; text-align: center; min-height: 100px; background: #f9f9f9;">
-                        <img id="imagenPrevia" src="perfil_foto/IMG_2542.JPEG" alt="Vista previa" style="max-width: 80px; max-height: 80px; border-radius: 50%; object-fit: cover;">
-                        <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">Vista previa de la foto</p>
+                    <div id="vistaFoto" style="margin-top: 10px; padding: 20px; border: 2px dashed #25C9FF; border-radius: 12px; text-align: center; min-height: 140px; background: linear-gradient(135deg, #f0f8ff 0%, #e3f2fd 100%); cursor: pointer; transition: all 0.3s ease;" onclick="abrirSelectorArchivo()">
+                        <img id="imagenPrevia" src="perfil_foto/IMG_2542.JPEG" alt="Vista previa" style="max-width: 100px; max-height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <p style="margin: 8px 0 0 0; font-size: 14px; color: #25C9FF; font-weight: 600;">
+                            <span class="icono-camara" style="font-size: 24px; display: block; margin-bottom: 5px;">📷</span>
+                            Haz clic aquí o arrastra una imagen
+                        </p>
+                        <div id="estadoImagen" style="margin-top: 10px; font-size: 12px; color: #666; padding: 5px; border-radius: 4px;"></div>
                     </div>
                 </div>
                 
@@ -332,7 +477,7 @@
                 
                 <div class="signature-preview" id="preview">
                     <div style="border: 1px solid rgba(37, 201, 255,.5); display: inline-block; border-radius: 3px;">
-                        <table style="font-family: arial; height:90px; border-collapse: collapse; border: ">
+                        <table style="font-family: arial; height:90px; border-collapse: collapse;">
                           <tr>
                             <td style="padding: 7px">
                               <img src="perfil_foto/IMG_2542.JPEG" 
