@@ -1,25 +1,350 @@
-<br>a
-<div style="border: 1px solid rgba(37, 201, 255,.5); display: inline-block; border-radius: 3px;">
-<table style="font-family: arial; height:90px; border-collapse: collapse; border: ">
-  <tr>
-    <td style="padding: 7px">
-      <img src="https://drupal.ed.team/sites/default/files/styles/perfil_de_usuario_250x250_/public/pictures/2018-11/alvaro.jpg?itok=PgZOAnuP" 
-         alt="" 
-         width="80" 
-         height="80" 
-         style="display:block; border-radius: 50%; margin-right: 7px; float: left"
-       >
-      <div style="width: 5px; height: 80px; background:#75c8fd; float: right">
-    </td>
-    <td style="vertical-align:top; padding:7px 14px 7px 3px">
-      <strong style="margin: 0; font-size:17px; color: rgba(40, 45, 49,.9); line-height: 24px; height: 24px; display:block">Álvaro Felipe Chávez</strong>
-      <p style='font-size:12px; margin: 0px 0 6px; height: 30px'>
-        <span style="margin: 0; color: #666">Director General (CEO)</span>
-        <br>
-        <a href='https://ed.team' style="color: #25C9FF; font-weight: bold">https://ed.team</a>
-      </p>
-      <div id="sociales" ></div>
-    </td>
-  </tr>
-</table>
-</div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Firma de Correo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #25C9FF 0%, #1A9FD9 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+        
+        .form-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 4px solid #25C9FF;
+        }
+        
+        .form-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #25C9FF;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+        
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .checkbox-item input[type="checkbox"] {
+            margin-right: 8px;
+            width: auto;
+        }
+        
+        .preview-section {
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            position: sticky;
+            top: 20px;
+        }
+        
+        .preview-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        
+        .signature-preview {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            min-height: 150px;
+            background: #fafafa;
+        }
+        
+        .export-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .btn-primary {
+            background: #25C9FF;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1A9FD9;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #545b62;
+            transform: translateY(-2px);
+        }
+        
+        .color-picker {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .color-picker input[type="color"] {
+            width: 50px;
+            height: 40px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                margin: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎨 Generador de Firma de Correo</h1>
+            <p>Crea firmas profesionales para tus correos electrónicos de forma fácil y rápida</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="form-section">
+                <h2>📝 Información Personal</h2>
+                
+                <div class="form-group">
+                    <label for="nombre">Nombre Completo *</label>
+                    <input type="text" id="nombre" placeholder="Ej: Jose Luis Reyes Gil" value="Jose Luis Reyes Gil">
+                </div>
+                
+                <div class="form-group">
+                    <label for="titulo">Título/Cargo *</label>
+                    <input type="text" id="titulo" placeholder="Ej: Estudiante de licenciatura en Informática" value="Estudiante de licenciatura en Informática">
+                </div>
+                
+                <div class="form-group">
+                    <label for="empresa">Empresa/Organización</label>
+                    <input type="text" id="empresa" placeholder="Ej: Universidad Nacional">
+                </div>
+                
+                <div class="form-group">
+                    <label for="telefono">Teléfono</label>
+                    <input type="tel" id="telefono" placeholder="Ej: +1 234 567 8900">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="Ej: correo@ejemplo.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="website">Página Web</label>
+                    <input type="url" id="website" placeholder="Ej: https://mi-pagina.com" value="pagina web">
+                </div>
+                
+                <div class="form-group">
+                    <label for="foto">URL de Foto de Perfil</label>
+                    <input type="url" id="foto" placeholder="URL de la imagen" value="perfil_foto/IMG_2542.JPEG">
+                </div>
+                
+                <h2>🎨 Personalización</h2>
+                
+                <div class="form-group">
+                    <label for="colorPrincipal">Color Principal</label>
+                    <div class="color-picker">
+                        <input type="color" id="colorPrincipal" value="#25C9FF">
+                        <span>Color de la línea y enlaces</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="colorTexto">Color del Texto</label>
+                    <div class="color-picker">
+                        <input type="color" id="colorTexto" value="#282d31">
+                        <span>Color del nombre</span>
+                    </div>
+                </div>
+                
+                <h2>🌐 Redes Sociales</h2>
+                
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="facebook" checked>
+                        <label for="facebook">Facebook</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="youtube" checked>
+                        <label for="youtube">YouTube</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="twitter" checked>
+                        <label for="twitter">Twitter</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="linkedin" checked>
+                        <label for="linkedin">LinkedIn</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="github" checked>
+                        <label for="github">GitHub</label>
+                    </div>
+                </div>
+                
+                <div class="form-group" style="margin-top: 20px;">
+                    <label>URLs de Redes Sociales:</label>
+                    <input type="url" id="facebookUrl" placeholder="URL de Facebook" value="https://facebook.com/tu-perfil" style="margin-bottom: 8px;">
+                    <input type="url" id="youtubeUrl" placeholder="URL de YouTube" value="https://youtube.com/tu-canal" style="margin-bottom: 8px;">
+                    <input type="url" id="twitterUrl" placeholder="URL de Twitter" value="https://twitter.com/tu-usuario" style="margin-bottom: 8px;">
+                    <input type="url" id="linkedinUrl" placeholder="URL de LinkedIn" value="https://linkedin.com/in/tu-perfil" style="margin-bottom: 8px;">
+                    <input type="url" id="githubUrl" placeholder="URL de GitHub" value="https://github.com/tu-usuario">
+                </div>
+            </div>
+            
+            <div class="preview-section">
+                <h2>👀 Vista Previa</h2>
+                
+                <div class="signature-preview" id="preview">
+                    <div style="border: 1px solid rgba(37, 201, 255,.5); display: inline-block; border-radius: 3px;">
+                        <table style="font-family: arial; height:90px; border-collapse: collapse; border: ">
+                          <tr>
+                            <td style="padding: 7px">
+                              <img src="perfil_foto/IMG_2542.JPEG" 
+                                 alt="" 
+                                 width="80" 
+                                 height="80" 
+                                 style="display:block; border-radius: 50%; margin-right: 7px; float: left"
+                               >
+                              <div style="width: 5px; height: 80px; background:#75c8fd; float: right">
+                            </td>
+                            <td style="vertical-align:top; padding:7px 14px 7px 3px">
+                              <strong style="margin: 0; font-size:17px; color: rgba(40, 45, 49,.9); line-height: 24px; height: 24px; display:block">Jose Luis Reyes Gil</strong>
+                              <p style='font-size:12px; margin: 0px 0 6px; height: 30px'>
+                                <span style="margin: 0; color: #666">Estudiante de licenciatura en Informatica</span>
+                                <br>
+                                <a href='pagina web' style="color: #25C9FF; font-weight: bold">pagina web</a>
+                              </p>
+                              <div id="sociales" ></div>
+                            </td>
+                          </tr>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="export-buttons">
+                    <button class="btn btn-primary" onclick="copiarFirma()">📋 Copiar HTML</button>
+                    <button class="btn btn-secondary" onclick="descargarFirma()">💾 Descargar</button>
+                    <button class="btn btn-primary" onclick="resetearFormulario()">🔄 Resetear</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="firma.js"></script>
+</body>
+</html>
