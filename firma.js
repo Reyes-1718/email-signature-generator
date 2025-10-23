@@ -74,14 +74,31 @@ function generarFirmaHTML(data, socialesActivos) {
         socialIcons += `<a href="${socialesActivos[social].url}" style="display:inline-block;margin-right:6px"><img src="${socialesActivos[social].icon}" width="20" style="display: block"></a>`
     }
     
-    const telefoneHTML = data.telefono ? `<br><span style="margin: 0; color: #666">${data.telefono}</span>` : '';
-    const emailHTML = data.email ? `<br><span style="margin: 0; color: #666">${data.email}</span>` : '';
+    // Crear hipervínculos automáticos para teléfono y email
+    const telefoneHTML = data.telefono ? `<br><a href="tel:${data.telefono}" style="margin: 0; color: #666; text-decoration: none;">${data.telefono}</a>` : '';
+    const emailHTML = data.email ? `<br><a href="mailto:${data.email}" style="margin: 0; color: #666; text-decoration: none;">${data.email}</a>` : '';
     const empresaHTML = data.empresa ? `<br><span style="margin: 0; color: #666">${data.empresa}</span>` : '';
-    const websiteHTML = data.website ? `<br><a href='${data.website}' style="color: ${data.colorPrincipal}; font-weight: bold">${data.website}</a>` : '';
+    
+    // Mejorar el formato del website
+    let websiteHTML = '';
+    if (data.website) {
+        let websiteUrl = data.website;
+        let websiteText = data.website;
+        
+        // Si no tiene protocolo, agregarlo
+        if (!websiteUrl.startsWith('http://') && !websiteUrl.startsWith('https://')) {
+            websiteUrl = 'https://' + websiteUrl;
+        }
+        
+        // Limpiar el texto mostrado
+        websiteText = websiteText.replace(/^https?:\/\//, '').replace(/^www\./, '');
+        
+        websiteHTML = `<br><a href='${websiteUrl}' style="color: ${data.colorPrincipal}; font-weight: bold; text-decoration: none;">${websiteText}</a>`;
+    }
     
     return `
     <div style="border: 1px solid ${data.colorPrincipal}80; display: inline-block; border-radius: 3px;">
-        <table style="font-family: arial; height:90px; border-collapse: collapse; border: ">
+        <table style="font-family: arial; height:90px; border-collapse: collapse;">
           <tr>
             <td style="padding: 7px">
               <img src="${data.foto}" 
@@ -108,10 +125,43 @@ function generarFirmaHTML(data, socialesActivos) {
     </div>`;
 }
 
+// Función para manejar la subida de archivos de imagen
+function manejarArchivoImagen(file) {
+    if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const imagenUrl = e.target.result;
+            currentSignatureData.foto = imagenUrl;
+            
+            // Actualizar vista previa
+            const imagenPrevia = document.getElementById('imagenPrevia');
+            if (imagenPrevia) {
+                imagenPrevia.src = imagenUrl;
+            }
+            
+            actualizarVistaPrevia();
+        };
+        reader.readAsDataURL(file);
+    } else {
+        alert('❌ Por favor selecciona un archivo de imagen válido (JPG, PNG, GIF, WebP)');
+    }
+}
+
+// Función para actualizar la vista previa de la imagen
+function actualizarVistaPreviewImagen(url) {
+    const imagenPrevia = document.getElementById('imagenPrevia');
+    if (imagenPrevia && url) {
+        imagenPrevia.src = url;
+        imagenPrevia.onerror = function() {
+            this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik00MCA1NkM0OC44MzY2IDU2IDU2IDQ4LjgzNjYgNTYgNDBDNTYgMzEuMTYzNCA0OC44MzY2IDI0IDQwIDI0QzMxLjE2MzQgMjQgMjQgMzEuMTYzNCAyNCA0MEMyNCA0OC44MzY2IDMxLjE2MzQgNTYgNDAgNTZaIiBmaWxsPSIjREREREREIi8+CjxwYXRoIGQ9Ik00MCA0NEMzNy43OTA5IDQ0IDM2IDQyLjIwOTEgMzYgNDBDMzYgMzcuNzkwOSAzNy43OTA5IDM2IDQwIDM2QzQyLjIwOTEgMzYgNDQgMzcuNzkwOSA0NCA0MEM0NCA0Mi4yMDkxIDQyLjIwOTEgNDQgNDAgNDRaIiBmaWxsPSIjQkJCQkJCIi8+Cjwvc3ZnPgo=';
+        };
+    }
+}
+
 // Función para agregar event listeners a todos los campos
 function agregarEventListeners() {
     // Campos de texto
-    const campos = ['nombre', 'titulo', 'empresa', 'telefono', 'email', 'website', 'foto'];
+    const campos = ['nombre', 'titulo', 'empresa', 'telefono', 'email', 'website'];
     campos.forEach(campo => {
         const input = document.getElementById(campo);
         if (input) {
@@ -121,6 +171,49 @@ function agregarEventListeners() {
             });
         }
     });
+    
+    // Campo de foto URL con vista previa
+    const fotoInput = document.getElementById('foto');
+    if (fotoInput) {
+        fotoInput.addEventListener('input', (e) => {
+            currentSignatureData.foto = e.target.value;
+            actualizarVistaPreviewImagen(e.target.value);
+            actualizarVistaPrevia();
+        });
+    }
+    
+    // Radio buttons para tipo de foto
+    const radioUrl = document.getElementById('fotoUrl');
+    const radioArchivo = document.getElementById('fotoArchivo');
+    const urlContainer = document.getElementById('urlFotoContainer');
+    const archivoContainer = document.getElementById('archivoFotoContainer');
+    
+    if (radioUrl && radioArchivo && urlContainer && archivoContainer) {
+        radioUrl.addEventListener('change', function() {
+            if (this.checked) {
+                urlContainer.style.display = 'block';
+                archivoContainer.style.display = 'none';
+            }
+        });
+        
+        radioArchivo.addEventListener('change', function() {
+            if (this.checked) {
+                urlContainer.style.display = 'none';
+                archivoContainer.style.display = 'block';
+            }
+        });
+    }
+    
+    // Input de archivo
+    const archivoFoto = document.getElementById('archivoFoto');
+    if (archivoFoto) {
+        archivoFoto.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                manejarArchivoImagen(file);
+            }
+        });
+    }
     
     // Colores
     const colorPrincipal = document.getElementById('colorPrincipal');
@@ -153,6 +246,38 @@ function agregarEventListeners() {
             urlInput.addEventListener('input', actualizarVistaPrevia);
         }
     });
+    
+    // Drag and drop para imágenes
+    const vistaFoto = document.getElementById('vistaFoto');
+    if (vistaFoto) {
+        vistaFoto.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.style.borderColor = '#25C9FF';
+            this.style.backgroundColor = '#f0f8ff';
+        });
+        
+        vistaFoto.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.style.borderColor = '#ccc';
+            this.style.backgroundColor = '#f9f9f9';
+        });
+        
+        vistaFoto.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.style.borderColor = '#ccc';
+            this.style.backgroundColor = '#f9f9f9';
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                // Cambiar a modo archivo
+                document.getElementById('fotoArchivo').checked = true;
+                document.getElementById('urlFotoContainer').style.display = 'none';
+                document.getElementById('archivoFotoContainer').style.display = 'block';
+                
+                manejarArchivoImagen(files[0]);
+            }
+        });
+    }
 }
 
 // Función para copiar la firma al portapapeles
@@ -236,6 +361,19 @@ function resetearFormulario() {
         document.getElementById('foto').value = 'perfil_foto/IMG_2542.JPEG';
         document.getElementById('colorPrincipal').value = '#25C9FF';
         document.getElementById('colorTexto').value = '#282d31';
+        
+        // Resetear tipo de foto a URL
+        document.getElementById('fotoUrl').checked = true;
+        document.getElementById('fotoArchivo').checked = false;
+        document.getElementById('urlFotoContainer').style.display = 'block';
+        document.getElementById('archivoFotoContainer').style.display = 'none';
+        
+        // Resetear archivo de foto
+        const archivoFoto = document.getElementById('archivoFoto');
+        if (archivoFoto) archivoFoto.value = '';
+        
+        // Resetear vista previa de imagen
+        actualizarVistaPreviewImagen('perfil_foto/IMG_2542.JPEG');
         
         // Resetear URLs de redes sociales
         document.getElementById('facebookUrl').value = 'https://facebook.com/tu-perfil';

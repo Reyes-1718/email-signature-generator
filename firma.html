@@ -249,8 +249,24 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="foto">URL de Foto de Perfil</label>
-                    <input type="url" id="foto" placeholder="URL de la imagen" value="perfil_foto/IMG_2542.JPEG">
+                    <label>📸 Foto de Perfil</label>
+                    <div style="margin-bottom: 10px;">
+                        <input type="radio" id="fotoUrl" name="tipoFoto" value="url" checked style="margin-right: 5px;">
+                        <label for="fotoUrl" style="display: inline; font-weight: normal;">Usar URL de imagen</label>
+                        <input type="radio" id="fotoArchivo" name="tipoFoto" value="archivo" style="margin-left: 15px; margin-right: 5px;">
+                        <label for="fotoArchivo" style="display: inline; font-weight: normal;">Subir archivo</label>
+                    </div>
+                    <div id="urlFotoContainer">
+                        <input type="url" id="foto" placeholder="URL de la imagen (ej: https://ejemplo.com/foto.jpg)" value="perfil_foto/IMG_2542.JPEG" style="margin-bottom: 10px;">
+                    </div>
+                    <div id="archivoFotoContainer" style="display: none;">
+                        <input type="file" id="archivoFoto" accept="image/*" style="margin-bottom: 10px;">
+                        <small style="color: #666; display: block;">Formatos soportados: JPG, PNG, GIF, WebP</small>
+                    </div>
+                    <div id="vistaFoto" style="margin-top: 10px; padding: 10px; border: 1px dashed #ccc; border-radius: 5px; text-align: center; min-height: 100px; background: #f9f9f9;">
+                        <img id="imagenPrevia" src="perfil_foto/IMG_2542.JPEG" alt="Vista previa" style="max-width: 80px; max-height: 80px; border-radius: 50%; object-fit: cover;">
+                        <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">Vista previa de la foto</p>
+                    </div>
                 </div>
                 
                 <h2>🎨 Personalización</h2>
