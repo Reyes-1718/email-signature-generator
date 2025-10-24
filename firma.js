@@ -122,7 +122,7 @@ function generarFirmaHTML(data, socialesActivos) {
              alt="" 
              width="85" 
              height="85" 
-             style="border-radius: 50%; object-fit: cover; box-shadow: 0 3px 12px rgba(0,0,0,0.15); flex-shrink: 0;"
+             style="border-radius: 50%; object-fit: contain; background: #f5f5f5; box-shadow: 0 4px 12px rgba(0,0,0,0.15); flex-shrink: 0;"
         >
         
         <!-- Línea separadora rectangular que se ajusta al contenido -->
