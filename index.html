@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Firmas de Correo - Redirigiendo...</title>
+    <meta name="description" content="Generador profesional de firmas de correo electrónico compatible con Gmail, Outlook e iCloud">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+        }
+        .loading-container {
+            background: rgba(255,255,255,0.1);
+            padding: 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+        .spinner {
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid #25C9FF;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        h1 { margin-bottom: 10px; font-size: 2rem; }
+        p { opacity: 0.9; margin-bottom: 20px; }
+        .manual-link {
+            display: inline-block;
+            background: #25C9FF;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .manual-link:hover {
+            background: #1A9FD9;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-container">
+        <div class="spinner"></div>
+        <h1>🎨 Generador de Firmas de Correo</h1>
+        <p>Redirigiendo al generador...</p>
+        <p><small>Si no se redirige automáticamente:</small></p>
+        <a href="firma.html" class="manual-link">🚀 Ir al Generador</a>
+    </div>
+
+    <script>
+        // Redirección automática después de 2 segundos
+        setTimeout(function() {
+            window.location.href = 'firma.html';
+        }, 2000);
+        
+        console.log('🎨 Generador de Firmas de Correo');
+        console.log('📧 Compatible con Gmail, Outlook, iCloud');
+        console.log('🚀 Cargando aplicación...');
+    </script>
+</body>
+</html>

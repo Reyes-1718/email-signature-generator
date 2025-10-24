@@ -288,6 +288,69 @@ function abrirSelectorArchivo() {
     }
 }
 
+// Función para mostrar la opción de GitHub
+function mostrarOpcionGitHub() {
+    const panel = document.getElementById('panelGitHub');
+    if (panel) {
+        panel.style.display = 'block';
+        document.getElementById('urlGitHub').focus();
+    }
+}
+
+// Función para ocultar la opción de GitHub
+function ocultarOpcionGitHub() {
+    const panel = document.getElementById('panelGitHub');
+    if (panel) {
+        panel.style.display = 'none';
+        document.getElementById('urlGitHub').value = '';
+    }
+}
+
+// Función para cargar imagen desde GitHub
+function cargarImagenGitHub() {
+    const urlInput = document.getElementById('urlGitHub');
+    const url = urlInput.value.trim();
+    
+    if (!url) {
+        alert('❌ Por favor ingresa una URL de GitHub válida');
+        return;
+    }
+    
+    // Validar que sea una URL de GitHub con /raw/
+    if (!url.includes('github.com') || !url.includes('/raw/')) {
+        alert('❌ La URL debe ser de GitHub y contener "/raw/" para acceso directo\n\n✅ Formato correcto:\nhttps://github.com/tu-usuario/email-signature-generator/raw/main/images/perfil.jpg\n\n❌ Formato incorrecto:\nhttps://github.com/tu-usuario/repo/blob/main/imagen.jpg\n\n📖 Consulta SETUP_GITHUB.md para más ayuda');
+        return;
+    }
+    
+    actualizarEstadoImagen('⏳ Cargando imagen desde GitHub...', 'info');
+    
+    // Crear imagen temporal para verificar que carga
+    const img = new Image();
+    
+    img.onload = function() {
+        // La imagen cargó correctamente
+        currentSignatureData.foto = url;
+        
+        // Actualizar vista previa
+        const imagenPrevia = document.getElementById('imagenPrevia');
+        if (imagenPrevia) {
+            imagenPrevia.src = url;
+        }
+        
+        actualizarEstadoImagen('✅ Imagen cargada desde GitHub correctamente', 'success');
+        actualizarVistaPrevia();
+        ocultarOpcionGitHub();
+    };
+    
+    img.onerror = function() {
+        actualizarEstadoImagen('❌ No se pudo cargar la imagen desde GitHub. Verifica la URL.', 'error');
+        alert('❌ Error al cargar la imagen desde GitHub.\n\nVerifica que:\n• La URL sea correcta\n• El repositorio sea público\n• La imagen exista\n• Uses la URL con "/raw/"');
+    };
+    
+    // Intentar cargar la imagen
+    img.src = url;
+}
+
 // Función para alternar checkboxes cuando se hace clic en el contenedor
 function toggleCheckbox(socialId, event) {
     if (!socialId) {

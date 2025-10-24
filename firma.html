@@ -3,7 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador de Firma de Correo</title>
+    <title>Generador de Firma de Correo Profesional | Compatible Gmail, Outlook, iCloud</title>
+    <meta name="description" content="Crea firmas de correo profesionales y responsivas. Compatible con Gmail, Outlook, iCloud Mail. Personalización completa, redes sociales integradas y hospedaje de imágenes.">
+    <meta name="keywords" content="firma correo, email signature, gmail signature, outlook signature, generador firma, firma profesional">
+    <meta name="author" content="Email Signature Generator">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://github.com/tu-usuario/email-signature-generator/">
+    <meta property="og:title" content="Generador de Firma de Correo Profesional">
+    <meta property="og:description" content="Herramienta web gratuita para crear firmas de correo profesionales compatibles con todos los clientes de correo.">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="Generador de Firma de Correo Profesional">
+    <meta property="twitter:description" content="Crea firmas profesionales para Gmail, Outlook e iCloud de forma fácil y gratuita.">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📧</text></svg>">
     <style>
         * {
             margin: 0;
@@ -434,11 +451,33 @@
                 
                 <div class="form-group">
                     <label>📸 Foto de Perfil</label>
-                    <div style="margin-bottom: 15px;">
-                        <button type="button" id="btnFotoArchivo" class="btn-foto-solo" onclick="abrirSelectorArchivo()">
+                    <div style="margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button type="button" id="btnFotoArchivo" class="btn-foto-solo" onclick="abrirSelectorArchivo()" style="flex: 1; min-width: 200px;">
                             <span class="icono-subir">📤</span>
-                            Seleccionar imagen desde tu computadora
+                            Subir desde computadora
                         </button>
+                        <button type="button" class="btn-foto-solo" onclick="mostrarOpcionGitHub()" style="flex: 1; min-width: 200px; background: linear-gradient(135deg, #333 0%, #24292e 100%); border-color: #333;">
+                            <span style="font-size: 18px;">🐙</span>
+                            Usar desde GitHub
+                        </button>
+                    </div>
+                    
+                    <!-- Panel para URL de GitHub (oculto por defecto) -->
+                    <div id="panelGitHub" style="display: none; background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #333;">
+                        <h4 style="margin: 0 0 10px 0; color: #333; font-size: 14px;">🐙 Configurar imagen desde GitHub</h4>
+                        <input type="url" id="urlGitHub" placeholder="https://github.com/usuario/repo/raw/main/imagen.jpg" 
+                               style="width: 100%; margin-bottom: 10px; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        <div style="display: flex; gap: 10px;">
+                            <button onclick="cargarImagenGitHub()" style="background: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">✅ Cargar imagen</button>
+                            <button onclick="ocultarOpcionGitHub()" style="background: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">❌ Cancelar</button>
+                        </div>
+                        <div style="margin-top: 10px; font-size: 12px; color: #666; line-height: 1.4;">
+                            💡 <strong>Cómo obtener la URL:</strong><br>
+                            1. Sube tu imagen a la carpeta <code>/images/</code> de tu repositorio<br>
+                            2. Formato: <code>https://github.com/USUARIO/REPO/raw/main/images/FOTO.jpg</code><br>
+                            3. <strong>Importante:</strong> Debe contener "/raw/main/" para funcionar<br>
+                            4. <a href="SETUP_GITHUB.md" target="_blank" style="color: #333;">📖 Ver guía completa</a>
+                        </div>
                     </div>
                     <div id="archivoFotoContainer">
                         <input type="file" id="archivoFoto" accept="image/*" style="display: none;">
@@ -575,6 +614,13 @@
                     ✅ <strong>Gmail, Outlook, iCloud Mail</strong> - Usa "📧 Copiar Optimizada"<br>
                     ✅ <strong>Clientes básicos</strong> - Usa "📱 Copiar Simple" si hay problemas<br>
                     <em>Tip: En Gmail usa Ctrl+Shift+V para pegar sin formato previo</em>
+                </div>
+                
+                <div style="margin-top: 10px; padding: 12px; background: #e3f2fd; border-radius: 8px; font-size: 13px; color: #1565c0; line-height: 1.4;">
+                    <strong>🌐 Hospedaje de Imágenes:</strong><br>
+                    🐙 <strong>GitHub:</strong> Repositorio público → URL con "/raw/"<br>
+                    🏫 <strong>Office 365 Educativo:</strong> OneDrive → Compartir → "Cualquiera con el enlace"<br>
+                    📤 <strong>Subir archivo:</strong> Convierte automáticamente a Base64 (recomendado)
                 </div>
             </div>
         </div>
