@@ -86,20 +86,32 @@ function obtenerSocialesActivos() {
     return socialesActivos;
 }
 
-// Función para generar el HTML de la firma
+// Función para generar el HTML de la firma optimizada para Gmail
 function generarFirmaHTML(data, socialesActivos) {
     let socialIcons = '';
     for(let social in socialesActivos) {
-        socialIcons += `<a href="${socialesActivos[social].url}" style="display:inline-block;margin-right:8px;margin-bottom:4px"><img src="${socialesActivos[social].icon}" width="22" style="display: block; border-radius: 3px;"></a>`
+        socialIcons += `<a href="${socialesActivos[social].url}" style="text-decoration: none; margin-right: 8px;"><img src="${socialesActivos[social].icon}" width="20" height="20" style="border: 0; vertical-align: middle; border-radius: 2px;"></a>`
     }
     
-    // Crear hipervínculos automáticos para teléfono y email
-    const telefoneHTML = data.telefono ? `<br><a href="tel:${data.telefono}" style="margin: 0; color: #666; text-decoration: none;">${data.telefono}</a>` : '';
-    const emailHTML = data.email ? `<br><a href="mailto:${data.email}" style="margin: 0; color: #666; text-decoration: none;">${data.email}</a>` : '';
-    const empresaHTML = data.empresa ? `<br><span style="margin: 0; color: #666">${data.empresa}</span>` : '';
+    // Crear información de contacto sin <br> tags (problemáticos en algunos clientes)
+    const contactInfo = [];
     
-    // Mejorar el formato del website
-    let websiteHTML = '';
+    if (data.titulo) {
+        contactInfo.push(`<span style="color: #444; font-weight: 500;">${data.titulo}</span>`);
+    }
+    
+    if (data.empresa) {
+        contactInfo.push(`<span style="color: #666;">${data.empresa}</span>`);
+    }
+    
+    if (data.telefono) {
+        contactInfo.push(`<a href="tel:${data.telefono}" style="color: #666; text-decoration: none;">${data.telefono}</a>`);
+    }
+    
+    if (data.email) {
+        contactInfo.push(`<a href="mailto:${data.email}" style="color: #666; text-decoration: none;">${data.email}</a>`);
+    }
+    
     if (data.website) {
         let websiteUrl = data.website;
         let websiteText = data.website;
@@ -112,38 +124,89 @@ function generarFirmaHTML(data, socialesActivos) {
         // Limpiar el texto mostrado
         websiteText = websiteText.replace(/^https?:\/\//, '').replace(/^www\./, '');
         
-        websiteHTML = `<br><a href='${websiteUrl}' style="color: ${data.colorPrincipal}; font-weight: bold; text-decoration: none;">${websiteText}</a>`;
+        contactInfo.push(`<a href="${websiteUrl}" style="color: ${data.colorPrincipal}; font-weight: bold; text-decoration: none;">${websiteText}</a>`);
+    }
+    
+    // Estructura de tabla compatible con Gmail, iCloud, Outlook y otros clientes de correo
+    return `
+    <table cellpadding="0" cellspacing="0" border="0" style="font-family: Arial, sans-serif; font-size: 14px; line-height: 1.4; border-collapse: collapse; max-width: 600px; width: auto;">
+        <tr>
+            <td style="vertical-align: middle; padding-right: 15px; text-align: center;">
+                <!-- Foto de perfil centrada -->
+                <img src="${data.foto}" 
+                     alt="${data.nombre}" 
+                     width="80" 
+                     height="80" 
+                     style="border-radius: 40px; display: block; border: 3px solid ${data.colorPrincipal}; margin: 0 auto;"
+                >
+            </td>
+            <td width="4" style="background-color: ${data.colorPrincipal}; padding: 0; width: 4px; min-width: 4px; max-width: 4px;"></td>
+            <td style="vertical-align: middle; padding-left: 15px;">
+                <!-- Contenedor con fondo y bordes redondeados -->
+                <table cellpadding="0" cellspacing="0" border="0" style="background-color: #fafafa; border: 2px solid ${data.colorPrincipal}; border-radius: 12px; width: 100%; min-width: 280px;">
+                    <tr>
+                        <td style="padding: 15px 20px;">
+                            <!-- Información principal -->
+                            <table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
+                                <tr>
+                                    <td style="padding-bottom: 8px;">
+                                        <strong style="font-size: 18px; color: ${data.colorTexto}; font-weight: 700; margin: 0; display: block;">${data.nombre}</strong>
+                                    </td>
+                                </tr>
+                                ${contactInfo.map(info => `
+                                <tr>
+                                    <td style="padding-bottom: 4px; font-size: 13px; line-height: 1.3;">
+                                        ${info}
+                                    </td>
+                                </tr>
+                                `).join('')}
+                                ${socialIcons ? `
+                                <tr>
+                                    <td style="padding-top: 12px; border-top: 1px solid #cccccc;">
+                                        ${socialIcons}
+                                    </td>
+                                </tr>
+                                ` : ''}
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>`;
+}
+
+// Función para generar una versión súper simplificada para Gmail (si la principal no funciona)
+function generarFirmaSimpleGmail(data, socialesActivos) {
+    let socialLinks = '';
+    for(let social in socialesActivos) {
+        socialLinks += `<a href="${socialesActivos[social].url}" style="color: ${data.colorPrincipal}; text-decoration: none; margin-right: 10px;">${social.charAt(0).toUpperCase() + social.slice(1)}</a>`;
     }
     
     return `
-    <div style="display: flex; align-items: center; gap: 15px; font-family: arial;">
-        <!-- Foto de perfil centrada -->
-        <img src="${data.foto}" 
-             alt="" 
-             width="85" 
-             height="85" 
-             style="border-radius: 50%; object-fit: contain; background: #f5f5f5; box-shadow: 0 4px 12px rgba(0,0,0,0.15); flex-shrink: 0;"
-        >
-        
-        <!-- Línea separadora rectangular que se ajusta al contenido -->
-        <div style="width: 4px; background: ${data.colorPrincipal}; border-radius: 2px; align-self: stretch; min-height: 85px;"></div>
-        
-        <!-- Contenedor de información con esquinas redondeadas -->
-        <div style="background: #fafafa; border: 2px solid ${data.colorPrincipal}40; border-radius: 12px; padding: 15px 20px; min-width: 280px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); flex-grow: 1;">
-            <strong style="margin: 0; font-size: 18px; color: ${data.colorTexto}; line-height: 24px; display: block; margin-bottom: 8px;">${data.nombre}</strong>
-            
-            <div style="font-size: 13px; color: #666; line-height: 18px; margin-bottom: 12px;">
-                <span style="color: #444; font-weight: 500;">${data.titulo}</span>
-                ${empresaHTML}
-                ${telefoneHTML}
-                ${emailHTML}
-                ${websiteHTML}
-            </div>
-            
-            <!-- Iconos de redes sociales debajo -->
-            ${socialIcons ? `<div style="border-top: 1px solid ${data.colorPrincipal}30; padding-top: 12px; margin-top: 8px;">${socialIcons}</div>` : ''}
-        </div>
-    </div>`;
+    <table cellpadding="0" cellspacing="0" border="0" style="font-family: Arial, sans-serif; font-size: 14px; line-height: 1.4; border-collapse: collapse; max-width: 500px;">
+        <tr>
+            <td style="padding-right: 15px; vertical-align: middle; text-align: center;">
+                <img src="${data.foto}" width="60" height="60" style="border-radius: 30px; border: 2px solid ${data.colorPrincipal}; display: block; margin: 0 auto;">
+            </td>
+            <td width="3" style="background-color: ${data.colorPrincipal}; width: 3px; min-width: 3px;"></td>
+            <td style="vertical-align: middle; padding-left: 15px;">
+                <table cellpadding="0" cellspacing="0" border="0" style="background-color: #f9f9f9; border: 1px solid ${data.colorPrincipal}; border-radius: 8px; width: 100%;">
+                    <tr>
+                        <td style="padding: 12px 16px;">
+                            <div style="font-weight: bold; font-size: 16px; color: ${data.colorTexto}; margin-bottom: 5px;">${data.nombre}</div>
+                            <div style="color: #666; margin-bottom: 3px;">${data.titulo}</div>
+                            ${data.empresa ? `<div style="color: #666; margin-bottom: 3px;">${data.empresa}</div>` : ''}
+                            ${data.telefono ? `<div style="margin-bottom: 3px;"><a href="tel:${data.telefono}" style="color: #666; text-decoration: none;">${data.telefono}</a></div>` : ''}
+                            ${data.email ? `<div style="margin-bottom: 3px;"><a href="mailto:${data.email}" style="color: #666; text-decoration: none;">${data.email}</a></div>` : ''}
+                            ${data.website ? `<div style="margin-bottom: 8px;"><a href="${data.website}" style="color: ${data.colorPrincipal}; text-decoration: none; font-weight: bold;">${data.website.replace(/^https?:\/\//, '').replace(/^www\./, '')}</a></div>` : ''}
+                            ${socialLinks ? `<div style="border-top: 1px solid ${data.colorPrincipal}; padding-top: 8px; margin-top: 8px; opacity: 0.8;">${socialLinks}</div>` : ''}
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>`;
 }
 
 // Función para manejar la subida de archivos de imagen
@@ -445,6 +508,44 @@ function copiarFirma() {
         // Fallback para navegadores modernos
         navigator.clipboard.writeText(firmaHTML).then(() => {
             alert('✅ ¡Firma copiada al portapapeles!');
+        }).catch(() => {
+            alert('❌ No se pudo copiar la firma. Intenta seleccionar y copiar manualmente desde la vista previa.');
+        });
+    } finally {
+        document.body.removeChild(tempDiv);
+        window.getSelection().removeAllRanges();
+    }
+}
+
+// Función para copiar la versión simplificada para Gmail
+function copiarFirmaSimple() {
+    if (!validarFormulario()) return;
+    
+    const socialesActivos = obtenerSocialesActivos();
+    const firmaHTML = generarFirmaSimpleGmail(currentSignatureData, socialesActivos);
+    
+    // Crear un elemento temporal para copiar el contenido
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = firmaHTML;
+    document.body.appendChild(tempDiv);
+    
+    try {
+        // Seleccionar y copiar el contenido
+        const range = document.createRange();
+        range.selectNode(tempDiv);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+        
+        const successful = document.execCommand('copy');
+        if (successful) {
+            alert('✅ ¡Firma simple copiada al portapapeles! Esta versión es más compatible con Gmail. Pégala directamente en tu cliente de correo.');
+        } else {
+            throw new Error('No se pudo copiar');
+        }
+    } catch (err) {
+        // Fallback para navegadores modernos
+        navigator.clipboard.writeText(firmaHTML).then(() => {
+            alert('✅ ¡Firma simple copiada al portapapeles!');
         }).catch(() => {
             alert('❌ No se pudo copiar la firma. Intenta seleccionar y copiar manualmente desde la vista previa.');
         });

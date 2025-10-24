@@ -564,9 +564,17 @@
                 </div>
                 
                 <div class="export-buttons">
-                    <button class="btn btn-primary" onclick="copiarFirma()">📋 Copiar HTML</button>
+                    <button class="btn btn-primary" onclick="copiarFirma()" title="Copia la firma con formato optimizado para Gmail">📧 Copiar Optimizada</button>
+                    <button class="btn btn-primary" onclick="copiarFirmaSimple()" title="Copia una versión súper simple si la optimizada no funciona" style="background: #28a745;">📱 Copiar Simple</button>
                     <button class="btn btn-secondary" onclick="descargarFirma()">💾 Descargar</button>
                     <button class="btn btn-primary" onclick="resetearFormulario()">🔄 Resetear</button>
+                </div>
+                
+                <div style="margin-top: 15px; padding: 12px; background: #e8f5e8; border-radius: 8px; font-size: 13px; color: #2d5a2d; line-height: 1.4;">
+                    <strong>💡 Compatibilidad Total:</strong><br>
+                    ✅ <strong>Gmail, Outlook, iCloud Mail</strong> - Usa "📧 Copiar Optimizada"<br>
+                    ✅ <strong>Clientes básicos</strong> - Usa "📱 Copiar Simple" si hay problemas<br>
+                    <em>Tip: En Gmail usa Ctrl+Shift+V para pegar sin formato previo</em>
                 </div>
             </div>
         </div>
