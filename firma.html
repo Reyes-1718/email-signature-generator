@@ -484,7 +484,7 @@
         /* === ESTILOS ESPECÍFICOS PARA DISPOSITIVOS MÓVILES === */
         
         .mobile-device .form-group {
-            margin-bottom: 18px;
+            margin-bottom: 12px;
         }
         
         .mobile-device .form-group label {
@@ -541,11 +541,11 @@
         .mobile-device .signature-preview {
             border: 2px solid #e0e0e0;
             border-radius: 8px;
-            min-height: 150px;
-            max-height: 300px;
+            min-height: 100px;
+            max-height: 200px;
             overflow-x: auto;
             overflow-y: auto;
-            padding: 16px;
+            padding: 12px;
         }
         
         .mobile-device .export-buttons {
@@ -599,6 +599,173 @@
         .mobile-device .header p {
             color: #4a4a4a;
             font-weight: 500;
+        }
+        
+        /* === SISTEMA DE RESOLUCIONES INTEGRADO === */
+        
+        /* Clases para mostrar/ocultar según dispositivo */
+        .resolucion {
+            width: 100%;
+        }
+        
+        /* Móvil: Ocultar desktop y tablet */
+        @media (max-width: 767px) {
+            .desktop {
+                display: none !important;
+            }
+            .tablet {
+                display: none !important;
+            }
+            .movil {
+                display: block;
+            }
+        }
+        
+        /* Tablet: Ocultar móvil y desktop */
+        @media (min-width: 768px) and (max-width: 1023px) {
+            .desktop {
+                display: none !important;
+            }
+            .movil {
+                display: none !important;
+            }
+            .tablet {
+                display: block;
+            }
+        }
+        
+        /* Desktop: Ocultar móvil y tablet */
+        @media (min-width: 1024px) {
+            .tablet {
+                display: none !important;
+            }
+            .movil {
+                display: none !important;
+            }
+            .desktop {
+                display: block;
+            }
+        }
+        
+        /* === ESTILOS ESPECÍFICOS POR TIPO DE DISPOSITIVO === */
+        
+        /* Estilos específicos para DESKTOP */
+        @media (min-width: 1024px) {
+            .desktop h2 {
+                font-size: 1.5rem;
+                margin-bottom: 20px;
+                color: #2c3e50;
+            }
+            
+            .desktop p {
+                font-size: 1rem;
+                line-height: 1.5;
+                color: #666;
+            }
+            
+            .desktop .checkbox-group {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 15px;
+            }
+        }
+        
+        /* Estilos específicos para TABLET */
+        @media (min-width: 768px) and (max-width: 1023px) {
+            .tablet h2 {
+                font-size: 1.3rem;
+                margin-bottom: 15px;
+                color: #34495e;
+            }
+            
+            .tablet p {
+                font-size: 0.9rem;
+                color: #666;
+            }
+            
+            .tablet .checkbox-group {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 12px;
+            }
+        }
+        
+        /* Estilos específicos para MÓVIL */
+        @media (max-width: 767px) {
+            .movil h2 {
+                font-size: 1.1rem;
+                margin-bottom: 10px;
+                color: #2c3e50;
+                font-weight: 700;
+            }
+            
+            .movil p {
+                font-size: 0.8rem;
+                color: #555;
+                line-height: 1.3;
+            }
+            
+            .movil .checkbox-group {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+        }
+        
+        /* === ESTILOS PARA DEBUG PANEL === */
+            /* === SISTEMA DE RESOLUCIONES INTEGRADO === */
+        
+        /* === OPTIMIZACIÓN ESPECÍFICA PARA VISTA VERTICAL === */
+        
+        /* Dispositivos en orientación vertical */
+        @media (max-width: 480px) and (orientation: portrait) {
+            .mobile-device .form-section h2 {
+                font-size: 1rem;
+                margin-bottom: 8px;
+            }
+            
+            .mobile-device .form-group {
+                margin-bottom: 10px;
+            }
+            
+            .mobile-device .form-group label {
+                font-size: 13px;
+                margin-bottom: 3px;
+            }
+            
+            .mobile-device .checkbox-group {
+                gap: 6px;
+            }
+            
+            .mobile-device .checkbox-item {
+                padding: 10px 12px;
+                min-height: 40px;
+                font-size: 12px;
+            }
+            
+            .mobile-device .export-buttons {
+                gap: 8px;
+            }
+            
+            .mobile-device .btn {
+                min-height: 44px;
+                padding: 12px 16px;
+                font-size: 14px;
+            }
+            
+            .mobile-device .signature-preview {
+                min-height: 80px;
+                max-height: 120px;
+                padding: 10px;
+                font-size: 11px;
+            }
+            
+            .mobile-device #vistaFoto {
+                min-height: 80px;
+                padding: 10px;
+            }
+            
+            .mobile-device #imagenPrevia {
+                width: 55px;
+                height: 55px;
+            }
         }
         
         /* === RESPONSIVE DESIGN MEJORADO === */
@@ -708,33 +875,35 @@
         /* Móvil pequeño - Ultra compacto */
         @media (max-width: 480px) {
             body {
-                padding: 5px;
+                padding: 3px;
             }
             
             .header {
-                padding: 15px;
+                padding: 12px;
             }
             
             .header h1 {
-                font-size: 1.5rem;
+                font-size: 1.4rem;
                 line-height: 1.2;
+                margin-bottom: 4px;
             }
             
             .header p {
-                font-size: 0.9rem;
+                font-size: 0.85rem;
+                margin-bottom: 8px;
             }
             
             .main-content {
-                padding: 15px;
-                gap: 15px;
+                padding: 10px;
+                gap: 12px;
             }
             
             .form-section, .preview-section {
-                padding: 15px;
+                padding: 12px;
             }
             
             .form-group {
-                margin-bottom: 15px;
+                margin-bottom: 10px;
             }
             
             .form-group input, .form-group textarea {
@@ -744,25 +913,32 @@
             }
             
             .checkbox-group {
-                grid-template-columns: 1fr;
-                gap: 8px;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 6px;
             }
             
             .checkbox-item {
-                padding: 12px 16px;
-                font-size: 14px;
-                min-height: 48px;
+                padding: 10px 12px;
+                font-size: 13px;
+                min-height: 42px;
             }
             
             .color-picker {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 8px;
+                flex-direction: row;
+                align-items: center;
+                gap: 10px;
+                justify-content: space-between;
+            }
+            
+            .color-picker label {
+                font-size: 14px;
+                flex: 1;
             }
             
             .color-picker input[type="color"] {
-                width: 100%;
-                height: 50px;
+                width: 45px;
+                height: 35px;
+                flex-shrink: 0;
             }
             
             .btn-foto-solo {
@@ -773,19 +949,20 @@
             }
             
             #vistaFoto {
-                padding: 15px;
-                min-height: 120px;
+                padding: 10px;
+                min-height: 90px;
             }
             
             #imagenPrevia {
-                width: 70px;
-                height: 70px;
+                width: 60px;
+                height: 60px;
             }
             
             .signature-preview {
-                padding: 12px;
-                font-size: 12px;
-                min-height: 100px;
+                padding: 10px;
+                font-size: 11px;
+                min-height: 80px;
+                max-height: 120px;
             }
             
             .export-buttons {
@@ -802,25 +979,97 @@
         /* Móvil muy pequeño - Extremadamente compacto */
         @media (max-width: 320px) {
             .header h1 {
-                font-size: 1.3rem;
+                font-size: 1.2rem;
+            }
+            
+            .header p {
+                font-size: 0.8rem;
             }
             
             .main-content {
-                padding: 10px;
+                padding: 8px;
+                gap: 10px;
             }
             
             .form-section, .preview-section {
-                padding: 12px;
+                padding: 10px;
+            }
+            
+            .form-group {
+                margin-bottom: 8px;
             }
             
             .checkbox-item {
-                padding: 10px 12px;
-                font-size: 13px;
+                padding: 8px 10px;
+                font-size: 12px;
+                min-height: 38px;
             }
             
             .btn {
-                padding: 14px 16px;
+                padding: 12px 14px;
                 font-size: 13px;
+                min-height: 44px;
+            }
+            
+            .signature-preview {
+                padding: 8px;
+                min-height: 70px;
+                max-height: 100px;
+                font-size: 10px;
+            }
+        }
+        
+        /* Optimización específica para vista vertical (portrait) */
+        @media (max-width: 480px) and (orientation: portrait) {
+            .container {
+                margin: 2px;
+            }
+            
+            .main-content {
+                gap: 10px;
+            }
+            
+            .form-section h2 {
+                font-size: 1.1rem;
+                margin-bottom: 10px;
+            }
+            
+            .form-group {
+                margin-bottom: 8px;
+            }
+            
+            .form-group label {
+                font-size: 13px;
+                margin-bottom: 4px;
+            }
+            
+            .form-group input, 
+            .form-group textarea {
+                padding: 10px 12px;
+                font-size: 15px;
+            }
+            
+            .checkbox-group {
+                gap: 4px;
+            }
+            
+            .export-buttons {
+                gap: 8px;
+            }
+            
+            .btn {
+                padding: 12px 16px;
+                min-height: 46px;
+            }
+            
+            /* Hacer la vista previa más pequeña en portrait */
+            .preview-section {
+                order: 2; /* Mover al final */
+            }
+            
+            .signature-preview {
+                max-height: 100px;
+                font-size: 10px;
             }
         }
     </style>
@@ -834,7 +1083,21 @@
         
         <div class="main-content">
             <div class="form-section">
-                <h2>📝 Información Personal</h2>
+                <!-- Título adaptativo según dispositivo -->
+                <div class="desktop">
+                    <h2>📝 Información Personal Completa</h2>
+                    <p style="color: #666; margin-bottom: 20px;">Completa todos los campos para crear tu firma profesional perfecta</p>
+                </div>
+                
+                <div class="tablet">
+                    <h2>📝 Información Personal</h2>
+                    <p style="color: #666; margin-bottom: 15px;">Datos para tu firma profesional</p>
+                </div>
+                
+                <div class="movil">
+                    <h2>📝 Datos</h2>
+                    <p style="color: #666; margin-bottom: 10px; font-size: 13px;">Completa para crear tu firma</p>
+                </div>
                 
                 <div class="form-group">
                     <label for="nombre">Nombre Completo *</label>
@@ -915,10 +1178,28 @@
                     </div>
                 </div>
                 
-                <h2>🎨 Personalización</h2>
+                <!-- Título de personalización adaptativo -->
+                <div class="desktop">
+                    <h2>🎨 Personalización de Colores</h2>
+                    <p style="color: #666; margin-bottom: 15px;">Ajusta los colores para que coincidan con tu marca personal</p>
+                </div>
+                
+                <div class="tablet">
+                    <h2>🎨 Personalización</h2>
+                </div>
+                
+                <div class="movil">
+                    <h2>🎨 Colores</h2>
+                </div>
                 
                 <div class="form-group">
-                    <label for="colorPrincipal">Color Principal</label>
+                    <!-- Labels adaptativos para colores -->
+                    <div class="desktop">
+                        <label for="colorPrincipal">Color Principal de la Firma</label>
+                    </div>
+                    <div class="tablet movil">
+                        <label for="colorPrincipal">Color Principal</label>
+                    </div>
                     <div class="color-picker">
                         <input type="color" id="colorPrincipal" value="#25C9FF">
                         <span>Color de la línea y enlaces</span>
@@ -933,7 +1214,20 @@
                     </div>
                 </div>
                 
-                <h2>🌐 Redes Sociales</h2>
+                <!-- Título de redes sociales adaptativo -->
+                <div class="desktop">
+                    <h2>🌐 Redes Sociales Profesionales</h2>
+                    <p style="color: #666; margin-bottom: 15px;">Selecciona las redes sociales que quieres incluir en tu firma</p>
+                </div>
+                
+                <div class="tablet">
+                    <h2>🌐 Redes Sociales</h2>
+                    <p style="color: #666; margin-bottom: 10px;">Selecciona tus redes</p>
+                </div>
+                
+                <div class="movil">
+                    <h2>🌐 Redes</h2>
+                </div>
                 
                 <div class="checkbox-group">
                     <div class="checkbox-item" onclick="toggleCheckbox('facebook', event)">

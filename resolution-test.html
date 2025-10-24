@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test de Sistema de Resoluciones - Integración Completa</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .test-section {
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        
+        .device-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        
+        /* === SISTEMA DE RESOLUCIONES INTEGRADO === */
+        
+        .resolucion {
+            width: 100%;
+        }
+        
+        /* Móvil: Ocultar desktop y tablet */
+        @media (max-width: 767px) {
+            .desktop {
+                display: none !important;
+            }
+            .tablet {
+                display: none !important;
+            }
+            .movil {
+                display: block;
+            }
+            
+            .device-indicator {
+                background: rgba(220, 53, 69, 0.9);
+                color: white;
+            }
+            
+            .device-indicator::before {
+                content: '📱 MÓVIL';
+            }
+        }
+        
+        /* Tablet: Ocultar móvil y desktop */
+        @media (min-width: 768px) and (max-width: 1023px) {
+            .desktop {
+                display: none !important;
+            }
+            .movil {
+                display: none !important;
+            }
+            .tablet {
+                display: block;
+            }
+            
+            .device-indicator {
+                background: rgba(255, 193, 7, 0.9);
+                color: black;
+            }
+            
+            .device-indicator::before {
+                content: '📋 TABLET';
+            }
+        }
+        
+        /* Desktop: Ocultar móvil y tablet */
+        @media (min-width: 1024px) {
+            .tablet {
+                display: none !important;
+            }
+            .movil {
+                display: none !important;
+            }
+            .desktop {
+                display: block;
+            }
+            
+            .device-indicator {
+                background: rgba(40, 167, 69, 0.9);
+                color: white;
+            }
+            
+            .device-indicator::before {
+                content: '🖥️ DESKTOP';
+            }
+        }
+        
+        /* Estilos específicos por dispositivo */
+        
+        /* DESKTOP */
+        @media (min-width: 1024px) {
+            .desktop .test-content {
+                columns: 3;
+                column-gap: 30px;
+            }
+            
+            .desktop h1 {
+                font-size: 2.5rem;
+                text-align: center;
+            }
+            
+            .desktop h2 {
+                font-size: 1.8rem;
+                color: #ffeaa7;
+            }
+        }
+        
+        /* TABLET */
+        @media (min-width: 768px) and (max-width: 1023px) {
+            .tablet .test-content {
+                columns: 2;
+                column-gap: 20px;
+            }
+            
+            .tablet h1 {
+                font-size: 2rem;
+                text-align: center;
+            }
+            
+            .tablet h2 {
+                font-size: 1.5rem;
+                color: #fdcb6e;
+            }
+        }
+        
+        /* MÓVIL */
+        @media (max-width: 767px) {
+            .movil .test-content {
+                columns: 1;
+            }
+            
+            .movil h1 {
+                font-size: 1.5rem;
+                text-align: center;
+            }
+            
+            .movil h2 {
+                font-size: 1.2rem;
+                color: #fab1a0;
+            }
+            
+            .container {
+                padding: 15px;
+                margin: 10px;
+            }
+            
+            .test-section {
+                padding: 15px;
+                margin: 15px 0;
+            }
+        }
+        
+        .dimensions {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            z-index: 1000;
+        }
+        
+        .test-grid {
+            display: grid;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        @media (min-width: 1024px) {
+            .test-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (min-width: 768px) and (max-width: 1023px) {
+            .test-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 767px) {
+            .test-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .test-item {
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="device-indicator"></div>
+    <div class="dimensions" id="dimensions"></div>
+    
+    <div class="container">
+        <div class="resolucion">
+            <!-- VISTA DESKTOP -->
+            <div class="desktop">
+                <h1>🖥️ Vista Desktop Completa</h1>
+                <div class="test-section">
+                    <h2>Características Desktop:</h2>
+                    <div class="test-content">
+                        <p>✅ Pantalla grande ≥1024px</p>
+                        <p>✅ Layout de 3 columnas disponible</p>
+                        <p>✅ Texto más grande y detallado</p>
+                        <p>✅ Máxima información visible</p>
+                        <p>✅ Interfaz completa con todos los controles</p>
+                        <p>✅ Espaciado generoso para mejor legibilidad</p>
+                    </div>
+                </div>
+                
+                <div class="test-grid">
+                    <div class="test-item">
+                        <h3>💼 Formulario Completo</h3>
+                        <p>Todos los campos visibles simultáneamente</p>
+                    </div>
+                    <div class="test-item">
+                        <h3>🎨 Personalización Avanzada</h3>
+                        <p>Controles detallados y explicaciones completas</p>
+                    </div>
+                    <div class="test-item">
+                        <h3>🌐 Redes Sociales en Grid 4x2</h3>
+                        <p>Máximo aprovechamiento del espacio</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- VISTA TABLET -->
+            <div class="tablet">
+                <h1>📋 Vista Tablet Optimizada</h1>
+                <div class="test-section">
+                    <h2>Características Tablet:</h2>
+                    <div class="test-content">
+                        <p>✅ Pantalla media 768px-1023px</p>
+                        <p>✅ Layout de 2 columnas</p>
+                        <p>✅ Texto balanceado</p>
+                        <p>✅ Navegación táctil optimizada</p>
+                        <p>✅ Interfaz adaptada para touch</p>
+                    </div>
+                </div>
+                
+                <div class="test-grid">
+                    <div class="test-item">
+                        <h3>📝 Formulario Adaptado</h3>
+                        <p>Campos organizados para pantalla media</p>
+                    </div>
+                    <div class="test-item">
+                        <h3>🎨 Controles Táctiles</h3>
+                        <p>Botones y selectores optimizados para dedos</p>
+                    </div>
+                    <div class="test-item">
+                        <h3>🌐 Redes en Grid 3x3</h3>
+                        <p>Balance entre espacio y funcionalidad</p>
+                    </div>
+                    <div class="test-item">
+                        <h3>👀 Vista Previa Proporcionada</h3>
+                        <p>Tamaño adecuado para resolución media</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- VISTA MÓVIL -->
+            <div class="movil">
+                <h1>📱 Vista Móvil Ultra-Compacta</h1>
+                <div class="test-section">
+                    <h2>Características Móvil:</h2>
+                    <div class="test-content">
+                        <p>✅ Pantalla pequeña ≤767px</p>
+                        <p>✅ Layout de 1 columna vertical</p>
+                        <p>✅ Texto conciso y directo</p>
+                        <p>✅ Navegación con pulgar optimizada</p>
+                        <p>✅ Mínimo scroll necesario</p>
+                        <p>✅ Elementos grandes para touch preciso</p>
+                        <p>✅ Carga rápida y eficiente</p>
+                    </div>
+                </div>
+                
+                <div class="test-grid">
+                    <div class="test-item">
+                        <h3>📝 Form Compacto</h3>
+                        <p>Solo campos esenciales visibles, navegación fluida</p>
+                    </div>
+                    <div class="test-item">
+                        <h3>🎨 Colores Simplificados</h3>
+                        <p>Controles grandes y fáciles de usar con el pulgar</p>
+                    </div>
+                    <div class="test-item">
+                        <h3>🌐 Redes 2x4</h3>
+                        <p>Grid optimizado para pantallas estrechas</p>
+                    </div>
+                    <div class="test-item">
+                        <h3>👀 Preview Mini</h3>
+                        <p>Vista previa pequeña pero funcional</p>
+                    </div>
+                    <div class="test-item">
+                        <h3>⚡ Rendimiento</h3>
+                        <p>Optimizado para conexiones móviles lentas</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🔗 Enlaces de Prueba</h2>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin-top: 15px;">
+                <a href="firma.html" style="color: #74b9ff; text-decoration: none; background: rgba(255,255,255,0.2); padding: 10px 20px; border-radius: 25px; font-weight: bold;">
+                    📧 Generador de Firmas
+                </a>
+                <a href="mobile-simulator.html" style="color: #00b894; text-decoration: none; background: rgba(255,255,255,0.2); padding: 10px 20px; border-radius: 25px; font-weight: bold;">
+                    📱 Simulador Multi-Dispositivo
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function updateDimensions() {
+            const dimensionsElement = document.getElementById('dimensions');
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            
+            let deviceType = '';
+            if (width <= 767) {
+                deviceType = 'Móvil';
+            } else if (width >= 768 && width <= 1023) {
+                deviceType = 'Tablet';
+            } else {
+                deviceType = 'Desktop';
+            }
+            
+            dimensionsElement.textContent = `${width}×${height}px | ${deviceType}`;
+        }
+        
+        // Actualizar dimensiones al cargar y redimensionar
+        updateDimensions();
+        window.addEventListener('resize', updateDimensions);
+        
+        // Log para debug
+        console.log('🔍 Test de Sistema de Resoluciones Cargado');
+        console.log('📏 Dimensiones actuales:', window.innerWidth, 'x', window.innerHeight);
+    </script>
+</body>
+</html>

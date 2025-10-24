@@ -1073,11 +1073,194 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Reinicializar en cambio de orientación o redimensión
 window.addEventListener('orientationchange', function() {
-    setTimeout(inicializarMejorasMoviles, 300);
+    setTimeout(() => {
+        inicializarMejorasMoviles();
+        diagnosticarVistaVertical();
+    }, 300);
 });
 
 window.addEventListener('resize', function() {
     // Debounce para evitar múltiples ejecuciones
     clearTimeout(window.resizeTimeout);
-    window.resizeTimeout = setTimeout(inicializarMejorasMoviles, 300);
+    window.resizeTimeout = setTimeout(() => {
+        inicializarMejorasMoviles();
+        diagnosticarVistaVertical();
+    }, 300);
 });
+
+// Inicializar diagnóstico móvil al cargar
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+        diagnosticarVistaVertical();
+    }, 1000);
+});
+
+// === DIAGNÓSTICO ESPECÍFICO PARA VISTA VERTICAL ===
+
+function diagnosticarVistaVertical() {
+    console.log('🔍 Iniciando diagnóstico de vista vertical...');
+    
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    
+    if (width <= 480 && height > width) {
+        console.log('📱 Vista vertical detectada - Analizando problemas...');
+        
+        const problemas = [];
+        
+        // Analizar elementos que podrían causar scroll excesivo
+        const formGroups = document.querySelectorAll('.form-group');
+        const totalFormHeight = Array.from(formGroups).reduce((total, group) => {
+            return total + group.offsetHeight;
+        }, 0);
+        
+        const viewportHeight = window.innerHeight;
+        const headerHeight = document.querySelector('.header')?.offsetHeight || 0;
+        const previewHeight = document.querySelector('.signature-preview')?.offsetHeight || 0;
+        
+        console.log('📏 Medidas actuales:', {
+            viewportHeight,
+            headerHeight,
+            totalFormHeight,
+            previewHeight,
+            totalContent: headerHeight + totalFormHeight + previewHeight
+        });
+        
+        if (totalFormHeight > viewportHeight * 0.6) {
+            problemas.push('⚠️ Formulario ocupa más del 60% de la pantalla');
+        }
+        
+        if (previewHeight > viewportHeight * 0.25) {
+            problemas.push('⚠️ Vista previa muy grande para pantalla vertical');
+        }
+        
+        if (headerHeight > viewportHeight * 0.15) {
+            problemas.push('⚠️ Header demasiado alto para móvil vertical');
+        }
+        
+        // Mostrar resultados del diagnóstico
+        if (problemas.length > 0) {
+            console.warn('🚨 Problemas encontrados en vista vertical:', problemas);
+
+            // Aplicar correcciones automáticamente
+            aplicarCorreccionesVertical();
+        } else {
+            console.log('✅ Vista vertical optimizada correctamente');
+        }
+    }
+}
+
+function aplicarCorreccionesVertical() {
+    console.log('🔧 Aplicando correcciones extremas para vista vertical...');
+    
+    const width = window.innerWidth;
+    
+    if (width <= 480) {
+        // Aplicar estilos de emergencia para vista vertical
+        const style = document.createElement('style');
+        style.id = 'vertical-emergency-fixes';
+        style.textContent = `
+            @media (max-width: 480px) and (orientation: portrait) {
+                .container {
+                    margin: 1px !important;
+                }
+                
+                .form-group {
+                    margin-bottom: 6px !important;
+                }
+                
+                .form-group label {
+                    font-size: 12px !important;
+                    margin-bottom: 2px !important;
+                }
+                
+                .form-group input,
+                .form-group textarea {
+                    padding: 8px 10px !important;
+                    font-size: 14px !important;
+                }
+                
+                .header {
+                    padding: 6px !important;
+                }
+                
+                .header h1 {
+                    font-size: 1rem !important;
+                    margin-bottom: 2px !important;
+                }
+                
+                .header p {
+                    font-size: 0.7rem !important;
+                    margin-bottom: 4px !important;
+                }
+                
+                .main-content {
+                    padding: 6px !important;
+                    gap: 6px !important;
+                }
+                
+                .form-section,
+                .preview-section {
+                    padding: 6px !important;
+                }
+                
+                .form-section h2 {
+                    font-size: 0.9rem !important;
+                    margin-bottom: 6px !important;
+                }
+                
+                .signature-preview {
+                    max-height: 70px !important;
+                    min-height: 50px !important;
+                    padding: 4px !important;
+                    font-size: 8px !important;
+                }
+                
+                .checkbox-group {
+                    gap: 4px !important;
+                }
+                
+                .checkbox-item {
+                    padding: 6px 8px !important;
+                    font-size: 10px !important;
+                    min-height: 32px !important;
+                }
+                
+                .btn {
+                    padding: 6px 10px !important;
+                    font-size: 11px !important;
+                    min-height: 36px !important;
+                }
+                
+                .export-buttons {
+                    gap: 4px !important;
+                }
+                
+                #vistaFoto {
+                    min-height: 50px !important;
+                    padding: 4px !important;
+                }
+                
+                #imagenPrevia {
+                    width: 35px !important;
+                    height: 35px !important;
+                }
+                
+                .color-picker input[type="color"] {
+                    width: 30px !important;
+                    height: 25px !important;
+                }
+            }
+        `;
+        
+        // Remover estilos anteriores si existen
+        const existingFixes = document.getElementById('vertical-emergency-fixes');
+        if (existingFixes) {
+            existingFixes.remove();
+        }
+        
+        // Aplicar nuevos estilos
+        document.head.appendChild(style);
+        console.log('✅ Correcciones ultra-compactas aplicadas');
+    }
+}
