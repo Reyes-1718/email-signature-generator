@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
     <title>Generador de Firma de Correo Profesional | Compatible Gmail, Outlook, iCloud</title>
     <meta name="description" content="Crea firmas de correo profesionales y responsivas. Compatible con Gmail, Outlook, iCloud Mail. Personalización completa, redes sociales integradas y hospedaje de imágenes.">
     <meta name="keywords" content="firma correo, email signature, gmail signature, outlook signature, generador firma, firma profesional">
@@ -375,35 +375,452 @@
             box-shadow: 0 6px 16px rgba(37, 201, 255, 0.2);
         }
         
-        @media (max-width: 768px) {
+        /* === MEJORAS TÁCTILES Y MÓVILES === */
+        
+        /* Mejorar elementos interactivos para touch */
+        .checkbox-item:active {
+            transform: scale(0.98);
+            background-color: #0056b3;
+        }
+        
+        .btn:active {
+            transform: scale(0.98);
+        }
+        
+        /* Mejorar selectores de archivo para móvil */
+        input[type="file"] {
+            opacity: 0;
+            position: absolute;
+            z-index: -1;
+        }
+        
+        /* Área de toque más grande para elementos pequeños */
+        .icono-subir {
+            padding: 4px;
+            margin: -4px;
+        }
+        
+        /* Mejorar visibilidad de foco para navegación táctil */
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: 2px solid #007bff;
+            outline-offset: 2px;
+        }
+        
+        /* Prevenir zoom accidental en inputs en iOS */
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        textarea,
+        select {
+            font-size: 16px;
+        }
+        
+        /* Mejorar scrolling en preview */
+        .signature-preview {
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+        }
+        
+        .signature-preview::-webkit-scrollbar {
+            height: 4px;
+        }
+        
+        .signature-preview::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 2px;
+        }
+        
+        .signature-preview::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 2px;
+        }
+        
+        /* Indicadores visuales para elementos tocables */
+        .btn,
+        .checkbox-item,
+        .btn-foto-solo {
+            position: relative;
+        }
+        
+        .btn::after,
+        .checkbox-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: inherit;
+            opacity: 0;
+            transition: opacity 0.15s ease;
+            pointer-events: none;
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn:active::after {
+            opacity: 1;
+        }
+        
+        .checkbox-item::after {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .checkbox-item:active::after {
+            opacity: 1;
+        }
+        
+        /* Mejorar taps en iOS */
+        .btn,
+        .checkbox-item,
+        .btn-foto-solo {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        
+        /* === ESTILOS ESPECÍFICOS PARA DISPOSITIVOS MÓVILES === */
+        
+        .mobile-device .form-group {
+            margin-bottom: 18px;
+        }
+        
+        .mobile-device .form-group label {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        .mobile-device .form-group input,
+        .mobile-device .form-group textarea {
+            padding: 14px 16px;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            font-size: 16px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .mobile-device .form-group input:focus,
+        .mobile-device .form-group textarea:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+            outline: none;
+        }
+        
+        .mobile-device .checkbox-group {
+            gap: 12px;
+        }
+        
+        .mobile-device .checkbox-item {
+            padding: 14px 16px;
+            font-size: 15px;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .mobile-device .btn {
+            min-height: 50px;
+            padding: 15px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+        }
+        
+        .mobile-device .btn-foto-solo {
+            min-height: 55px;
+            padding: 16px 20px;
+            font-size: 15px;
+        }
+        
+        .mobile-device .signature-preview {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            min-height: 150px;
+            max-height: 300px;
+            overflow-x: auto;
+            overflow-y: auto;
+            padding: 16px;
+        }
+        
+        .mobile-device .export-buttons {
+            gap: 15px;
+        }
+        
+        .mobile-device #vistaFoto {
+            min-height: 140px;
+            border-radius: 8px;
+            border: 2px dashed #ccc;
+        }
+        
+        .mobile-device #imagenPrevia {
+            border-radius: 8px;
+        }
+        
+        /* Mejorar visibilidad de elementos activos en móvil */
+        .mobile-device .btn:active,
+        .mobile-device .checkbox-item:active {
+            transform: scale(0.97);
+            transition: transform 0.1s ease;
+        }
+        
+        /* Indicador de scroll en preview para móvil */
+        .mobile-device .signature-preview::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        
+        .mobile-device .signature-preview::-webkit-scrollbar-track {
+            background: #f8f9fa;
+            border-radius: 3px;
+        }
+        
+        .mobile-device .signature-preview::-webkit-scrollbar-thumb {
+            background: #007bff;
+            border-radius: 3px;
+        }
+        
+        /* Mejorar contraste en móviles para mejor legibilidad */
+        .mobile-device .form-section h2 {
+            color: #1a1a1a;
+            font-weight: 700;
+        }
+        
+        .mobile-device .header h1 {
+            color: #1a1a1a;
+            font-weight: 800;
+        }
+        
+        .mobile-device .header p {
+            color: #4a4a4a;
+            font-weight: 500;
+        }
+        
+        /* === RESPONSIVE DESIGN MEJORADO === */
+        
+        /* Tablet - Vista intermedia */
+        @media (max-width: 1024px) {
+            .container {
+                margin: 15px;
+            }
+            
             .main-content {
-                grid-template-columns: 1fr;
+                gap: 25px;
+                padding: 25px;
+            }
+            
+            .header {
+                padding: 25px;
             }
             
             .header h1 {
-                font-size: 2rem;
+                font-size: 2.2rem;
+            }
+        }
+        
+        /* Móvil grande - Layout adaptado */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
             }
             
             .container {
-                margin: 10px;
+                margin: 0;
+                border-radius: 10px;
             }
             
-            .btn-foto {
+            .header {
+                padding: 20px;
+                text-align: center;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+                margin-bottom: 8px;
+            }
+            
+            .header p {
+                font-size: 1rem;
+            }
+            
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 20px;
+            }
+            
+            .form-section, .preview-section {
+                padding: 20px;
+            }
+            
+            .form-section h2 {
+                font-size: 1.3rem;
+                margin-bottom: 15px;
+            }
+            
+            .checkbox-group {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+            
+            .checkbox-item {
+                padding: 10px 12px;
                 font-size: 13px;
-                padding: 10px 16px;
-                flex-direction: column;
-                gap: 3px;
+                min-height: 44px; /* Tamaño mínimo para touch */
             }
             
             .btn-foto-solo {
                 font-size: 14px;
                 padding: 14px 20px;
-                flex-direction: column;
+                flex-direction: row;
                 gap: 8px;
             }
             
-            .icono-subir {
-                font-size: 18px;
+            .export-buttons {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .btn {
+                width: 100%;
+                padding: 14px 20px;
+                font-size: 15px;
+                min-height: 48px; /* Tamaño táctil cómodo */
+            }
+            
+            .signature-preview {
+                padding: 15px;
+                min-height: 120px;
+                overflow-x: auto;
+            }
+            
+            .preview-section {
+                position: static;
+                margin-top: 20px;
+            }
+        }
+        
+        /* Móvil pequeño - Ultra compacto */
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+            
+            .header {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+                line-height: 1.2;
+            }
+            
+            .header p {
+                font-size: 0.9rem;
+            }
+            
+            .main-content {
+                padding: 15px;
+                gap: 15px;
+            }
+            
+            .form-section, .preview-section {
+                padding: 15px;
+            }
+            
+            .form-group {
+                margin-bottom: 15px;
+            }
+            
+            .form-group input, .form-group textarea {
+                padding: 12px;
+                font-size: 16px; /* Evitar zoom en iOS */
+                border-radius: 6px;
+            }
+            
+            .checkbox-group {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            
+            .checkbox-item {
+                padding: 12px 16px;
+                font-size: 14px;
+                min-height: 48px;
+            }
+            
+            .color-picker {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+            
+            .color-picker input[type="color"] {
+                width: 100%;
+                height: 50px;
+            }
+            
+            .btn-foto-solo {
+                flex-direction: column;
+                padding: 16px;
+                gap: 8px;
+                font-size: 14px;
+            }
+            
+            #vistaFoto {
+                padding: 15px;
+                min-height: 120px;
+            }
+            
+            #imagenPrevia {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .signature-preview {
+                padding: 12px;
+                font-size: 12px;
+                min-height: 100px;
+            }
+            
+            .export-buttons {
+                gap: 10px;
+            }
+            
+            .btn {
+                padding: 16px 20px;
+                font-size: 14px;
+                min-height: 52px;
+            }
+        }
+        
+        /* Móvil muy pequeño - Extremadamente compacto */
+        @media (max-width: 320px) {
+            .header h1 {
+                font-size: 1.3rem;
+            }
+            
+            .main-content {
+                padding: 10px;
+            }
+            
+            .form-section, .preview-section {
+                padding: 12px;
+            }
+            
+            .checkbox-item {
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+            
+            .btn {
+                padding: 14px 16px;
+                font-size: 13px;
             }
         }
     </style>

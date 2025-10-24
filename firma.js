@@ -868,3 +868,216 @@ document.addEventListener('DOMContentLoaded', function() {
         testearAnomaliasBotones();
     }, 1000);
 });
+
+// === MEJORAS ESPECÍFICAS PARA MÓVILES ===
+
+// Función para detectar si es un dispositivo móvil
+function esDispositivoMovil() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+           window.innerWidth <= 768;
+}
+
+// Mejorar experiencia tactil
+function mejorarExperienciaTactil() {
+    if (!esDispositivoMovil()) return;
+    
+    // Añadir feedback táctil a botones
+    const elementosTactiles = document.querySelectorAll('.btn, .checkbox-item, .btn-foto-solo');
+    
+    elementosTactiles.forEach(elemento => {
+        // Eventos touch para feedback visual
+        elemento.addEventListener('touchstart', function(e) {
+            this.style.transform = 'scale(0.98)';
+            this.style.transition = 'transform 0.1s ease';
+        }, { passive: true });
+        
+        elemento.addEventListener('touchend', function(e) {
+            this.style.transform = '';
+            this.style.transition = 'transform 0.3s ease';
+        }, { passive: true });
+        
+        elemento.addEventListener('touchcancel', function(e) {
+            this.style.transform = '';
+            this.style.transition = 'transform 0.3s ease';
+        }, { passive: true });
+    });
+}
+
+// Prevenir zoom accidental en iOS
+function prevenirZoomAccidental() {
+    if (!esDispositivoMovil()) return;
+    
+    const inputs = document.querySelectorAll('input, textarea, select');
+    inputs.forEach(input => {
+        // Asegurar que los inputs tengan el tamaño de fuente correcto
+        if (window.getComputedStyle(input).fontSize === '16px') {
+            return; // Ya tiene el tamaño correcto
+        }
+        input.style.fontSize = '16px';
+    });
+}
+
+// Mejorar navegación con teclado en móvil
+function mejorarNavegacionTeclado() {
+    const formularioInputs = document.querySelectorAll('input, textarea, select');
+    
+    formularioInputs.forEach((input, index) => {
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                
+                // Si es el último campo, hacer focus en el botón de copiar
+                if (index === formularioInputs.length - 1) {
+                    const btnCopiar = document.getElementById('copyBtn');
+                    if (btnCopiar) btnCopiar.focus();
+                } else {
+                    // Ir al siguiente campo
+                    const siguienteCampo = formularioInputs[index + 1];
+                    if (siguienteCampo) siguienteCampo.focus();
+                }
+            }
+        });
+    });
+}
+
+// Mejorar scroll suave en preview
+function mejorarScrollPreview() {
+    const preview = document.querySelector('.signature-preview');
+    if (!preview) return;
+    
+    let isScrolling = false;
+    
+    preview.addEventListener('scroll', function() {
+        if (!isScrolling) {
+            // Añadir indicador visual de scroll activo
+            preview.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+            isScrolling = true;
+        }
+        
+        // Remover indicador después de que termine el scroll
+        clearTimeout(preview.scrollTimeout);
+        preview.scrollTimeout = setTimeout(() => {
+            preview.style.boxShadow = '';
+            isScrolling = false;
+        }, 150);
+    }, { passive: true });
+}
+
+// Optimizar rendimiento en móviles
+function optimizarRendimientoMovil() {
+    if (!esDispositivoMovil()) return;
+    
+    // Reducir la frecuencia de actualización de preview en móviles
+    let timeoutPreview;
+    const actualizarPreviewOptimizado = function() {
+        clearTimeout(timeoutPreview);
+        timeoutPreview = setTimeout(() => {
+            actualizarVistaPrevia();
+        }, 300); // Delay más largo en móviles
+    };
+    
+    // Reemplazar eventos de input con versión optimizada
+    const inputs = document.querySelectorAll('input, textarea, select');
+    inputs.forEach(input => {
+        // Remover listeners antiguos si existen
+        input.removeEventListener('input', actualizarVistaPrevia);
+        input.removeEventListener('change', actualizarVistaPrevia);
+        
+        // Añadir versión optimizada
+        input.addEventListener('input', actualizarPreviewOptimizado);
+        input.addEventListener('change', actualizarVistaPrevia); // Cambios inmediatos para selects
+    });
+}
+
+// Añadir indicador de carga para acciones lentas
+function mostrarIndicadorCarga(elemento, texto = 'Procesando...') {
+    const textoOriginal = elemento.textContent;
+    const estaDeshabilitado = elemento.disabled;
+    
+    elemento.textContent = texto;
+    elemento.disabled = true;
+    elemento.style.opacity = '0.7';
+    
+    return function() {
+        elemento.textContent = textoOriginal;
+        elemento.disabled = estaDeshabilitado;
+        elemento.style.opacity = '';
+    };
+}
+
+// Mejorar feedback visual para acciones
+function mejorarFeedbackAcciones() {
+    const btnCopiar = document.getElementById('copyBtn');
+    const btnDescargar = document.getElementById('downloadBtn');
+    
+    if (btnCopiar) {
+        const copiarOriginal = btnCopiar.onclick;
+        btnCopiar.onclick = function(e) {
+            const restaurar = mostrarIndicadorCarga(btnCopiar, 'Copiando...');
+            
+            setTimeout(() => {
+                if (copiarOriginal) copiarOriginal.call(this, e);
+                restaurar();
+                
+                // Feedback visual de éxito
+                btnCopiar.textContent = '✓ Copiado';
+                btnCopiar.style.backgroundColor = '#4caf50';
+                setTimeout(() => {
+                    btnCopiar.textContent = '📋 Copiar Firma';
+                    btnCopiar.style.backgroundColor = '';
+                }, 2000);
+            }, 100);
+        };
+    }
+    
+    if (btnDescargar) {
+        const descargarOriginal = btnDescargar.onclick;
+        btnDescargar.onclick = function(e) {
+            const restaurar = mostrarIndicadorCarga(btnDescargar, 'Generando...');
+            
+            setTimeout(() => {
+                if (descargarOriginal) descargarOriginal.call(this, e);
+                restaurar();
+            }, 100);
+        };
+    }
+}
+
+// Inicializar mejoras móviles
+function inicializarMejorasMoviles() {
+    if (esDispositivoMovil()) {
+        console.log('📱 Dispositivo móvil detectado - Activando optimizaciones');
+        
+        // Aplicar todas las mejoras móviles
+        mejorarExperienciaTactil();
+        prevenirZoomAccidental();
+        mejorarNavegacionTeclado();
+        mejorarScrollPreview();
+        optimizarRendimientoMovil();
+        mejorarFeedbackAcciones();
+        
+        // Añadir clase CSS para estilos específicos móviles
+        document.body.classList.add('mobile-device');
+        
+        console.log('✅ Optimizaciones móviles aplicadas correctamente');
+    } else {
+        console.log('🖥️ Dispositivo de escritorio detectado - Usando configuración estándar');
+    }
+}
+
+// Ejecutar mejoras móviles después de la inicialización
+document.addEventListener('DOMContentLoaded', function() {
+    // Esperar un poco para que todo esté completamente cargado
+    setTimeout(inicializarMejorasMoviles, 500);
+});
+
+// Reinicializar en cambio de orientación o redimensión
+window.addEventListener('orientationchange', function() {
+    setTimeout(inicializarMejorasMoviles, 300);
+});
+
+window.addEventListener('resize', function() {
+    // Debounce para evitar múltiples ejecuciones
+    clearTimeout(window.resizeTimeout);
+    window.resizeTimeout = setTimeout(inicializarMejorasMoviles, 300);
+});
