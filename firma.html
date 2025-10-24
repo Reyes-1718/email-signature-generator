@@ -491,29 +491,30 @@
                 <h2>👀 Vista Previa</h2>
                 
                 <div class="signature-preview" id="preview">
-                    <div style="border: 1px solid rgba(37, 201, 255,.5); display: inline-block; border-radius: 3px;">
-                        <table style="font-family: arial; height:90px; border-collapse: collapse;">
-                          <tr>
-                            <td style="padding: 7px">
-                              <img src="perfil_foto/IMG_2542.JPEG" 
-                                 alt="" 
-                                 width="80" 
-                                 height="80" 
-                                 style="display:block; border-radius: 50%; margin-right: 7px; float: left"
-                               >
-                              <div style="width: 5px; height: 80px; background:#75c8fd; float: right">
-                            </td>
-                            <td style="vertical-align:top; padding:7px 14px 7px 3px">
-                              <strong style="margin: 0; font-size:17px; color: rgba(40, 45, 49,.9); line-height: 24px; height: 24px; display:block">Jose Luis Reyes Gil</strong>
-                              <p style='font-size:12px; margin: 0px 0 6px; height: 30px'>
-                                <span style="margin: 0; color: #666">Estudiante de licenciatura en Informatica</span>
-                                <br>
-                                <a href='pagina web' style="color: #25C9FF; font-weight: bold">pagina web</a>
-                              </p>
-                              <div id="sociales" ></div>
-                            </td>
-                          </tr>
-                        </table>
+                    <div style="display: flex; align-items: center; gap: 15px; font-family: arial;">
+                        <!-- Foto de perfil centrada -->
+                        <img src="perfil_foto/IMG_2542.JPEG" 
+                             alt="" 
+                             width="85" 
+                             height="85" 
+                             style="border-radius: 50%; object-fit: cover; box-shadow: 0 3px 12px rgba(0,0,0,0.15); flex-shrink: 0;"
+                        >
+                        
+                        <!-- Línea separadora rectangular que se ajusta al contenido -->
+                        <div style="width: 4px; background: #25C9FF; border-radius: 2px; align-self: stretch; min-height: 85px;"></div>
+                        
+                        <!-- Contenedor de información con esquinas redondeadas -->
+                        <div style="background: #fafafa; border: 2px solid #25C9FF40; border-radius: 12px; padding: 15px 20px; min-width: 280px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); flex-grow: 1;">
+                            <strong style="margin: 0; font-size: 18px; color: #282d31; line-height: 24px; display: block; margin-bottom: 8px;">Jose Luis Reyes Gil</strong>
+                            
+                            <div style="font-size: 13px; color: #666; line-height: 18px; margin-bottom: 12px;">
+                                <span style="color: #444; font-weight: 500;">Estudiante de licenciatura en Informatica</span>
+                                <br><a href='https://mi-pagina.com' style="color: #25C9FF; font-weight: bold; text-decoration: none;">mi-pagina.com</a>
+                            </div>
+                            
+                            <!-- Iconos de redes sociales debajo -->
+                            <div id="sociales" style="border-top: 1px solid #25C9FF30; padding-top: 12px; margin-top: 8px;"></div>
+                        </div>
                     </div>
                 </div>
                 

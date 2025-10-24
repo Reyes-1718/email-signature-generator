@@ -90,7 +90,7 @@ function obtenerSocialesActivos() {
 function generarFirmaHTML(data, socialesActivos) {
     let socialIcons = '';
     for(let social in socialesActivos) {
-        socialIcons += `<a href="${socialesActivos[social].url}" style="display:inline-block;margin-right:6px"><img src="${socialesActivos[social].icon}" width="20" style="display: block"></a>`
+        socialIcons += `<a href="${socialesActivos[social].url}" style="display:inline-block;margin-right:8px;margin-bottom:4px"><img src="${socialesActivos[social].icon}" width="22" style="display: block; border-radius: 3px;"></a>`
     }
     
     // Crear hipervínculos automáticos para teléfono y email
@@ -116,31 +116,33 @@ function generarFirmaHTML(data, socialesActivos) {
     }
     
     return `
-    <div style="border: 1px solid ${data.colorPrincipal}80; display: inline-block; border-radius: 3px;">
-        <table style="font-family: arial; height:90px; border-collapse: collapse;">
-          <tr>
-            <td style="padding: 7px">
-              <img src="${data.foto}" 
-                 alt="" 
-                 width="80" 
-                 height="80" 
-                 style="display:block; border-radius: 50%; margin-right: 7px; float: left"
-               >
-              <div style="width: 5px; height: 80px; background:${data.colorPrincipal}; float: right"></div>
-            </td>
-            <td style="vertical-align:top; padding:7px 14px 7px 3px">
-              <strong style="margin: 0; font-size:17px; color: ${data.colorTexto}; line-height: 24px; height: 24px; display:block">${data.nombre}</strong>
-              <p style='font-size:12px; margin: 0px 0 6px; min-height: 30px'>
-                <span style="margin: 0; color: #666">${data.titulo}</span>
+    <div style="display: flex; align-items: center; gap: 15px; font-family: arial;">
+        <!-- Foto de perfil centrada -->
+        <img src="${data.foto}" 
+             alt="" 
+             width="85" 
+             height="85" 
+             style="border-radius: 50%; object-fit: cover; box-shadow: 0 3px 12px rgba(0,0,0,0.15); flex-shrink: 0;"
+        >
+        
+        <!-- Línea separadora rectangular que se ajusta al contenido -->
+        <div style="width: 4px; background: ${data.colorPrincipal}; border-radius: 2px; align-self: stretch; min-height: 85px;"></div>
+        
+        <!-- Contenedor de información con esquinas redondeadas -->
+        <div style="background: #fafafa; border: 2px solid ${data.colorPrincipal}40; border-radius: 12px; padding: 15px 20px; min-width: 280px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); flex-grow: 1;">
+            <strong style="margin: 0; font-size: 18px; color: ${data.colorTexto}; line-height: 24px; display: block; margin-bottom: 8px;">${data.nombre}</strong>
+            
+            <div style="font-size: 13px; color: #666; line-height: 18px; margin-bottom: 12px;">
+                <span style="color: #444; font-weight: 500;">${data.titulo}</span>
                 ${empresaHTML}
                 ${telefoneHTML}
                 ${emailHTML}
                 ${websiteHTML}
-              </p>
-              <div style="margin-top: 5px;">${socialIcons}</div>
-            </td>
-          </tr>
-        </table>
+            </div>
+            
+            <!-- Iconos de redes sociales debajo -->
+            ${socialIcons ? `<div style="border-top: 1px solid ${data.colorPrincipal}30; padding-top: 12px; margin-top: 8px;">${socialIcons}</div>` : ''}
+        </div>
     </div>`;
 }
 
