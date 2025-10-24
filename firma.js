@@ -23,6 +23,18 @@ let socials = {
   whatsapp: {
     url: 'https://wa.me/1234567890',
     icon: 'icon/whatsapp.png'
+  },
+  instagram: {
+    url: 'https://instagram.com/tu-usuario',
+    icon: 'icon/instagram.png'
+  },
+  telegram: {
+    url: 'https://t.me/tu-usuario',
+    icon: 'icon/telegram.png'
+  },
+  mail: {
+    url: 'mailto:tu-email@ejemplo.com',
+    icon: 'icon/mail.png'
   }
 }
 
@@ -57,8 +69,15 @@ function obtenerSocialesActivos() {
         const urlInput = document.getElementById(social + 'Url');
         
         if (checkbox && checkbox.checked && urlInput && urlInput.value.trim()) {
+            let url = urlInput.value.trim();
+            
+            // Manejo especial para el campo de email
+            if (social === 'mail' && !url.startsWith('mailto:')) {
+                url = 'mailto:' + url;
+            }
+            
             socialesActivos[social] = {
-                url: urlInput.value.trim(),
+                url: url,
                 icon: socials[social].icon
             };
         }
@@ -361,6 +380,9 @@ function resetearFormulario() {
         document.getElementById('linkedinUrl').value = 'https://linkedin.com/in/tu-perfil';
         document.getElementById('githubUrl').value = 'https://github.com/tu-usuario';
         document.getElementById('whatsappUrl').value = 'https://wa.me/1234567890';
+        document.getElementById('instagramUrl').value = 'https://instagram.com/tu-usuario';
+        document.getElementById('telegramUrl').value = 'https://t.me/tu-usuario';
+        document.getElementById('mailUrl').value = 'tu-email@ejemplo.com';
         
         // Marcar todos los checkboxes
         Object.keys(socials).forEach(social => {
