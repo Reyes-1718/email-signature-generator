@@ -148,9 +148,30 @@ function generarFirmaHTML(data, socialesActivos) {
 
 // Función para manejar la subida de archivos de imagen
 function manejarArchivoImagen(file) {
-    if (file && file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
+    if (!file) {
+        actualizarEstadoImagen('❌ No se seleccionó ningún archivo', 'error');
+        return;
+    }
+    
+    if (!file.type.startsWith('image/')) {
+        actualizarEstadoImagen('❌ Formato no válido. Selecciona JPG, PNG, GIF o WebP', 'error');
+        alert('❌ Por favor selecciona un archivo de imagen válido (JPG, PNG, GIF, WebP)');
+        return;
+    }
+    
+    // Validar tamaño del archivo (máximo 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+        actualizarEstadoImagen('❌ La imagen es demasiado grande (máximo 5MB)', 'error');
+        alert('❌ La imagen es demasiado grande. Por favor selecciona una imagen menor a 5MB.');
+        return;
+    }
+    
+    actualizarEstadoImagen('⏳ Cargando imagen...', 'info');
+    
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+        try {
             const imagenUrl = e.target.result;
             currentSignatureData.foto = imagenUrl;
             
@@ -158,17 +179,27 @@ function manejarArchivoImagen(file) {
             const imagenPrevia = document.getElementById('imagenPrevia');
             if (imagenPrevia) {
                 imagenPrevia.src = imagenUrl;
+                imagenPrevia.onerror = function() {
+                    actualizarEstadoImagen('❌ Error al cargar la imagen', 'error');
+                };
             }
             
             // Actualizar estado con mensaje de éxito para archivo
-            actualizarEstadoImagen('✅ Archivo subido correctamente', 'success');
+            actualizarEstadoImagen('✅ Imagen cargada correctamente', 'success');
             
             actualizarVistaPrevia();
-        };
-        reader.readAsDataURL(file);
-    } else {
-        alert('❌ Por favor selecciona un archivo de imagen válido (JPG, PNG, GIF, WebP)');
-    }
+        } catch (error) {
+            actualizarEstadoImagen('❌ Error al procesar la imagen', 'error');
+            console.error('Error procesando imagen:', error);
+        }
+    };
+    
+    reader.onerror = function() {
+        actualizarEstadoImagen('❌ Error al leer el archivo', 'error');
+        alert('❌ Error al leer el archivo. Por favor intenta de nuevo.');
+    };
+    
+    reader.readAsDataURL(file);
 }
 
 // Función para actualizar el estado de la imagen
@@ -191,6 +222,86 @@ function abrirSelectorArchivo() {
     const archivoInput = document.getElementById('archivoFoto');
     if (archivoInput) {
         archivoInput.click();
+    }
+}
+
+// Función para alternar checkboxes cuando se hace clic en el contenedor
+function toggleCheckbox(socialId, event) {
+    if (!socialId) {
+        console.warn('toggleCheckbox: socialId no proporcionado');
+        return;
+    }
+    
+    const checkbox = document.getElementById(socialId);
+    if (!checkbox) {
+        console.warn(`toggleCheckbox: No se encontró checkbox con ID "${socialId}"`);
+        return;
+    }
+    
+    const container = checkbox.closest('.checkbox-item');
+    
+    try {
+        // Cambiar estado del checkbox
+        checkbox.checked = !checkbox.checked;
+        
+        // Disparar evento change manualmente para sincronizar con event listeners
+        checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+        
+        // Actualizar el estado visual del contenedor
+        updateCheckboxVisualState(socialId);
+        
+        // Prevenir propagación para evitar dobles disparos
+        if (event) {
+            event.stopPropagation();
+        }
+        
+    } catch (error) {
+        console.error(`Error en toggleCheckbox para ${socialId}:`, error);
+    }
+}
+
+// Función para actualizar el estado visual de los botones de redes sociales
+function updateCheckboxVisualState(socialId) {
+    if (!socialId) {
+        console.warn('updateCheckboxVisualState: socialId no proporcionado');
+        return;
+    }
+    
+    const checkbox = document.getElementById(socialId);
+    if (!checkbox) {
+        console.warn(`updateCheckboxVisualState: No se encontró checkbox con ID "${socialId}"`);
+        return;
+    }
+    
+    const container = checkbox.closest('.checkbox-item');
+    if (!container) {
+        console.warn(`updateCheckboxVisualState: No se encontró contenedor para checkbox "${socialId}"`);
+        return;
+    }
+    
+    // Actualizar clase visual basado en el estado del checkbox
+    if (checkbox.checked) {
+        container.classList.add('checked');
+    } else {
+        container.classList.remove('checked');
+    }
+}
+
+// Función para inicializar los estados visuales de todos los checkboxes
+function initializeCheckboxStates() {
+    let erroresInicializacion = 0;
+    
+    Object.keys(socials).forEach(social => {
+        try {
+            updateCheckboxVisualState(social);
+        } catch (error) {
+            console.error(`Error inicializando estado de ${social}:`, error);
+            erroresInicializacion++;
+        }
+    });
+    
+    if (erroresInicializacion > 0) {
+        console.warn(`Se encontraron ${erroresInicializacion} errores durante la inicialización de checkboxes`);
     }
 }
 
@@ -246,7 +357,10 @@ function agregarEventListeners() {
         const urlInput = document.getElementById(social + 'Url');
         
         if (checkbox) {
-            checkbox.addEventListener('change', actualizarVistaPrevia);
+            checkbox.addEventListener('change', () => {
+                updateCheckboxVisualState(social);
+                actualizarVistaPrevia();
+            });
         }
         
         if (urlInput) {
@@ -282,8 +396,30 @@ function agregarEventListeners() {
     }
 }
 
+// Función para validar campos obligatorios
+function validarFormulario() {
+    const errores = [];
+    
+    if (!currentSignatureData.nombre.trim()) {
+        errores.push('El nombre es obligatorio');
+    }
+    
+    if (!currentSignatureData.titulo.trim()) {
+        errores.push('El título/cargo es obligatorio');
+    }
+    
+    if (errores.length > 0) {
+        alert('❌ Por favor completa los siguientes campos:\n• ' + errores.join('\n• '));
+        return false;
+    }
+    
+    return true;
+}
+
 // Función para copiar la firma al portapapeles
 function copiarFirma() {
+    if (!validarFormulario()) return;
+    
     const socialesActivos = obtenerSocialesActivos();
     const firmaHTML = generarFirmaHTML(currentSignatureData, socialesActivos);
     
@@ -320,6 +456,8 @@ function copiarFirma() {
 
 // Función para descargar la firma como archivo HTML
 function descargarFirma() {
+    if (!validarFormulario()) return;
+    
     const socialesActivos = obtenerSocialesActivos();
     const firmaHTML = generarFirmaHTML(currentSignatureData, socialesActivos);
     
@@ -341,7 +479,16 @@ function descargarFirma() {
     
     const a = document.createElement('a');
     a.href = url;
-    a.download = `firma_${currentSignatureData.nombre.replace(/\s+/g, '_').toLowerCase()}.html`;
+    
+    // Crear nombre de archivo seguro
+    let nombreArchivo = currentSignatureData.nombre || 'firma';
+    nombreArchivo = nombreArchivo
+        .trim()
+        .replace(/[^a-zA-Z0-9\s]/g, '') // Remover caracteres especiales
+        .replace(/\s+/g, '_') // Reemplazar espacios con guiones bajos
+        .toLowerCase();
+    
+    a.download = `firma_${nombreArchivo}.html`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -360,7 +507,8 @@ function resetearFormulario() {
         document.getElementById('telefono').value = '';
         document.getElementById('email').value = '';
         document.getElementById('website').value = '';
-        document.getElementById('foto').value = 'perfil_foto/IMG_2542.JPEG';
+        // Resetear foto a la imagen por defecto
+        currentSignatureData.foto = 'perfil_foto/IMG_2542.JPEG';
         document.getElementById('colorPrincipal').value = '#25C9FF';
         document.getElementById('colorTexto').value = '#282d31';
         
@@ -386,10 +534,13 @@ function resetearFormulario() {
         document.getElementById('telegramUrl').value = 'https://t.me/tu-usuario';
         document.getElementById('mailUrl').value = 'tu-email@ejemplo.com';
         
-        // Marcar todos los checkboxes
+        // Marcar todos los checkboxes y actualizar estados visuales
         Object.keys(socials).forEach(social => {
             const checkbox = document.getElementById(social);
-            if (checkbox) checkbox.checked = true;
+            if (checkbox) {
+                checkbox.checked = true;
+                updateCheckboxVisualState(social);
+            }
         });
         
         // Actualizar datos globales
@@ -410,11 +561,146 @@ function resetearFormulario() {
     }
 }
 
+// Función de depuración para verificar el estado de los botones
+function debugCheckboxStates() {
+    console.log('=== ESTADO DE BOTONES DE REDES SOCIALES ===');
+    Object.keys(socials).forEach(social => {
+        const checkbox = document.getElementById(social);
+        const container = checkbox?.closest('.checkbox-item');
+        const urlInput = document.getElementById(social + 'Url');
+        
+        console.log(`${social}:`, {
+            existe: !!checkbox,
+            checked: checkbox?.checked,
+            tieneContainer: !!container,
+            claseChecked: container?.classList.contains('checked'),
+            url: urlInput?.value,
+            visible: checkbox?.offsetParent !== null
+        });
+    });
+    console.log('=====================================');
+}
+
+// Función para detectar anomalías en botones de redes sociales
+function testearAnomaliasBotones() {
+    console.log('🔍 INICIANDO PRUEBAS DE ANOMALÍAS EN BOTONES...');
+    
+    const anomalias = [];
+    const resultados = [];
+    
+    Object.keys(socials).forEach(socialId => {
+        const checkbox = document.getElementById(socialId);
+        const container = checkbox?.closest('.checkbox-item');
+        const urlInput = document.getElementById(socialId + 'Url');
+        
+        console.log(`\n📋 Probando: ${socialId}`);
+        
+        // Prueba 1: Verificar existencia de elementos
+        if (!checkbox) {
+            anomalias.push(`❌ ${socialId}: Checkbox no encontrado`);
+            return;
+        }
+        if (!container) {
+            anomalias.push(`❌ ${socialId}: Container no encontrado`);
+            return;
+        }
+        
+        // Prueba 2: Verificar onclick handler
+        const onclickHandler = container.getAttribute('onclick');
+        if (!onclickHandler || !onclickHandler.includes('toggleCheckbox')) {
+            anomalias.push(`❌ ${socialId}: Onclick handler faltante o incorrecto: "${onclickHandler}"`);
+        }
+        
+        // Prueba 3: Verificar clases CSS
+        if (!container.classList.contains('checkbox-item')) {
+            anomalias.push(`❌ ${socialId}: Clase CSS 'checkbox-item' faltante`);
+        }
+        
+        // Prueba 4: Verificar visibilidad
+        if (checkbox.offsetParent === null) {
+            anomalias.push(`⚠️ ${socialId}: Elemento no visible`);
+        }
+        
+        // Prueba 5: Simular click y verificar cambio de estado
+        const estadoInicial = checkbox.checked;
+        console.log(`  Estado inicial: ${estadoInicial}`);
+        
+        try {
+            // Crear evento sintético para evitar problemas
+            const evento = new MouseEvent('click', {
+                bubbles: true,
+                cancelable: true,
+                view: window
+            });
+            
+            // Simular click usando la función directamente
+            toggleCheckbox(socialId, evento);
+            
+            const estadoIntermedio = checkbox.checked;
+            console.log(`  Estado después de toggleCheckbox: ${estadoIntermedio}`);
+            
+            if (estadoInicial === estadoIntermedio) {
+                anomalias.push(`⚠️ ${socialId}: toggleCheckbox no cambió el estado del checkbox`);
+            } else {
+                console.log(`  ✅ ${socialId}: toggleCheckbox funcionó correctamente`);
+            }
+            
+            // Restaurar estado original
+            checkbox.checked = estadoInicial;
+            updateCheckboxVisualState(socialId);
+            
+            resultados.push({
+                id: socialId,
+                funcionaToggle: estadoInicial !== estadoIntermedio,
+                tieneOnclick: !!onclickHandler,
+                visible: checkbox.offsetParent !== null
+            });
+            
+        } catch (error) {
+            anomalias.push(`❌ ${socialId}: Error al probar funcionalidad - ${error.message}`);
+        }
+    });
+    
+    // Mostrar resultados
+    console.log('\n🎯 RESULTADOS DE PRUEBAS:');
+    if (anomalias.length === 0) {
+        console.log('✅ ¡PERFECTO! No se encontraron anomalías. Todos los botones funcionan correctamente.');
+    } else {
+        console.log(`⚠️ Se encontraron ${anomalias.length} anomalías:`);
+        anomalias.forEach(anomalia => console.log('  ' + anomalia));
+    }
+    
+    console.log('\n📊 RESUMEN TÉCNICO:');
+    console.log(`- Botones probados: ${Object.keys(socials).length}`);
+    console.log(`- Anomalías detectadas: ${anomalias.length}`);
+    console.log('- Pruebas realizadas: Existencia, onclick handlers, funcionalidad, CSS, visibilidad');
+    
+    console.log('\n📋 RESULTADOS DETALLADOS:');
+    resultados.forEach(resultado => {
+        console.log(`  ${resultado.id}: Toggle=${resultado.funcionaToggle ? '✅' : '❌'}, Onclick=${resultado.tieneOnclick ? '✅' : '❌'}, Visible=${resultado.visible ? '✅' : '❌'}`);
+    });
+    
+    return { anomalias, resultados };
+}
+
 // Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
     agregarEventListeners();
+    initializeCheckboxStates(); // Inicializar estados visuales
     actualizarVistaPrevia();
+    
+    // Agregar funciones de debug al objeto global para pruebas
+    window.debugCheckboxStates = debugCheckboxStates;
+    window.testearAnomaliasBotones = testearAnomaliasBotones;
     
     console.log('🎨 Generador de Firma de Correo inicializado correctamente');
     console.log('📝 Completa el formulario para generar tu firma personalizada');
+    console.log('🔧 Para depurar botones, ejecuta: debugCheckboxStates()');
+    console.log('🔍 Para probar anomalías, ejecuta: testearAnomaliasBotones()');
+    
+    // Ejecutar prueba automática de anomalías tras la inicialización
+    setTimeout(() => {
+        console.log('\n⏱️ Ejecutando prueba automática de anomalías...');
+        testearAnomaliasBotones();
+    }, 1000);
 });
