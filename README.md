@@ -15,7 +15,7 @@ Un generador web completo para crear firmas de correo electrónico profesionales
 
 ## 🚀 Uso en Línea
 
-**Accede directamente:** [https://TU-USUARIO.github.io/email-signature-generator](https://TU-USUARIO.github.io/email-signature-generator)
+**Accede directamente:** [https://reyes-1718.github.io/email-signature-generator](https://reyes-1718.github.io/email-signature-generator)
 
 ## 📁 Hospedaje de Imágenes
 
