@@ -34,7 +34,7 @@ Un generador web completo para crear firmas de correo electrónico profesionales
 
 ```bash
 # Clonar repositorio
-git clone https://github.com/TU-USUARIO/email-signature-generator.git
+git clone https://github.com/reyes-1718/email-signature-generator.git
 cd email-signature-generator
 
 # Abrir servidor local
