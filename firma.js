@@ -46,6 +46,35 @@ function validarTelefono(telefono) {
     return regexTelefono.test(telefono) ? escapeHTML(telefono) : '';
 }
 
+// Feedback inline para inputs
+function setInputFeedback(inputId, valido, mensajeExito, mensajeError) {
+    const input = document.getElementById(inputId);
+    const hint = document.getElementById(inputId + 'Hint');
+    if (!input || !hint) return;
+
+    const valor = input.value.trim();
+    if (!valor) {
+        input.classList.remove('is-error', 'is-success');
+        hint.textContent = '';
+        hint.classList.remove('error', 'success');
+        return;
+    }
+
+    if (valido) {
+        input.classList.remove('is-error');
+        input.classList.add('is-success');
+        hint.textContent = mensajeExito;
+        hint.classList.remove('error');
+        hint.classList.add('success');
+    } else {
+        input.classList.remove('is-success');
+        input.classList.add('is-error');
+        hint.textContent = mensajeError;
+        hint.classList.remove('success');
+        hint.classList.add('error');
+    }
+}
+
 // === FIN FUNCIONES DE SEGURIDAD ===
 
 // Configuración de redes sociales
@@ -512,8 +541,31 @@ function agregarEventListeners() {
         if (input) {
             input.addEventListener('input', (e) => {
                 currentSignatureData[campo] = e.target.value;
+
+                // Validación en vivo para teléfono y email
+                if (campo === 'telefono') {
+                    const telValido = !!validarTelefono(e.target.value);
+                    setInputFeedback('telefono', telValido, 'Formato válido', 'Formato inválido: solo números, +, espacios, () y -');
+                }
+                if (campo === 'email') {
+                    const emailValido = !!validarEmail(e.target.value);
+                    setInputFeedback('email', emailValido, 'Formato válido', 'Formato inválido: usa nombre@dominio.com');
+                }
+
                 actualizarVistaPrevia();
             });
+
+            // Validar al iniciar si ya hay valor
+            if (input.value) {
+                if (campo === 'telefono') {
+                    const telValido = !!validarTelefono(input.value);
+                    setInputFeedback('telefono', telValido, 'Formato válido', 'Formato inválido: solo números, +, espacios, () y -');
+                }
+                if (campo === 'email') {
+                    const emailValido = !!validarEmail(input.value);
+                    setInputFeedback('email', emailValido, 'Formato válido', 'Formato inválido: usa nombre@dominio.com');
+                }
+            }
         }
     });
     
@@ -605,15 +657,27 @@ function validarFormulario() {
     if (!currentSignatureData.titulo.trim()) {
         errores.push('El título/cargo es obligatorio');
     }
-    
+
+    // Validación de email y teléfono
+    if (currentSignatureData.email.trim()) {
+        const esValido = !!validarEmail(currentSignatureData.email);
+        setInputFeedback('email', esValido, 'Formato válido', 'Formato inválido: usa nombre@dominio.com');
+        if (!esValido) errores.push('Email con formato inválido');
+    }
+
+    if (currentSignatureData.telefono.trim()) {
+        const esValido = !!validarTelefono(currentSignatureData.telefono);
+        setInputFeedback('telefono', esValido, 'Formato válido', 'Formato inválido: solo números, +, espacios, () y -');
+        if (!esValido) errores.push('Teléfono con formato inválido');
+    }
+ 
     if (errores.length > 0) {
         alert('❌ Por favor completa los siguientes campos:\n• ' + errores.join('\n• '));
         return false;
     }
-    
+ 
     return true;
 }
-
 // Función para copiar la firma al portapapeles
 function copiarFirma() {
     if (!validarFormulario()) return;
