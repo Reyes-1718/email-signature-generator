@@ -3,6 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <!-- Content Security Policy para prevenir XSS -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self';">
+    <!-- Evitar que el navegador infiera tipos MIME -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <!-- Prevenir clickjacking -->
+    <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+    <!-- Politica de referrer -->
+    <meta name="referrer" content="strict-origin-when-cross-origin">
     <title>Generador de Firma de Correo Profesional | Compatible Gmail, Outlook, iCloud</title>
     <meta name="description" content="Crea firmas de correo profesionales y responsivas. Compatible con Gmail, Outlook, iCloud Mail. Personalización completa, redes sociales integradas y hospedaje de imágenes.">
     <meta name="keywords" content="firma correo, email signature, gmail signature, outlook signature, generador firma, firma profesional">

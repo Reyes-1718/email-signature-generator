@@ -1,3 +1,53 @@
+// === FUNCIONES DE SEGURIDAD ===
+
+// Función para escapar caracteres HTML y prevenir XSS
+function escapeHTML(text) {
+    if (!text) return '';
+    const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;',
+        '/': '&#x2F;'
+    };
+    return String(text).replace(/[&<>"'\/]/g, char => map[char]);
+}
+
+// Validar URL para evitar javascript:, data:, etc.
+function validarURL(url) {
+    if (!url) return '';
+    try {
+        // Validar que sea una URL válida
+        const urlObj = new URL(url.startsWith('http') ? url : 'https://' + url);
+        const protocolPermitido = ['http:', 'https:', 'mailto:', 'tel:', 'wa.me:'].includes(urlObj.protocol);
+        if (!protocolPermitido) {
+            console.warn('URL con protocolo no permitido:', url);
+            return '';
+        }
+        return urlObj.href;
+    } catch (e) {
+        console.warn('URL inválida:', url);
+        return '';
+    }
+}
+
+// Validar email
+function validarEmail(email) {
+    if (!email) return '';
+    const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regexEmail.test(email) ? escapeHTML(email) : '';
+}
+
+// Validar teléfono (solo números, +, espacios, paréntesis, guiones)
+function validarTelefono(telefono) {
+    if (!telefono) return '';
+    const regexTelefono = /^[\d+\s()\-]+$/;
+    return regexTelefono.test(telefono) ? escapeHTML(telefono) : '';
+}
+
+// === FIN FUNCIONES DE SEGURIDAD ===
+
 // Configuración de redes sociales
 let socials = {
   facebook: {
@@ -90,67 +140,74 @@ function obtenerSocialesActivos() {
 function generarFirmaHTML(data, socialesActivos) {
     let socialIcons = '';
     for(let social in socialesActivos) {
-        socialIcons += `<a href="${socialesActivos[social].url}" style="text-decoration: none; margin-right: 8px;"><img src="${socialesActivos[social].icon}" width="20" height="20" style="border: 0; vertical-align: middle; border-radius: 2px;"></a>`
+        const url = validarURL(socialesActivos[social].url);
+        const icon = escapeHTML(socialesActivos[social].icon);
+        if (url) {
+            socialIcons += `<a href="${url}" style="text-decoration: none; margin-right: 8px;"><img src="${icon}" width="20" height="20" alt="${escapeHTML(social)}" style="border: 0; vertical-align: middle; border-radius: 2px;"></a>`
+        }
     }
     
     // Crear información de contacto sin <br> tags (problemáticos en algunos clientes)
     const contactInfo = [];
     
     if (data.titulo) {
-        contactInfo.push(`<span style="color: #444; font-weight: 500;">${data.titulo}</span>`);
+        contactInfo.push(`<span style="color: #444; font-weight: 500;">${escapeHTML(data.titulo)}</span>`);
     }
     
     if (data.empresa) {
-        contactInfo.push(`<span style="color: #666;">${data.empresa}</span>`);
+        contactInfo.push(`<span style="color: #666;">${escapeHTML(data.empresa)}</span>`);
     }
     
     if (data.telefono) {
-        contactInfo.push(`<a href="tel:${data.telefono}" style="color: #666; text-decoration: none;">${data.telefono}</a>`);
+        const telValido = validarTelefono(data.telefono);
+        if (telValido) {
+            contactInfo.push(`<a href="tel:${telValido}" style="color: #666; text-decoration: none;">${telValido}</a>`);
+        }
     }
     
     if (data.email) {
-        contactInfo.push(`<a href="mailto:${data.email}" style="color: #666; text-decoration: none;">${data.email}</a>`);
+        const emailValido = validarEmail(data.email);
+        if (emailValido) {
+            contactInfo.push(`<a href="mailto:${emailValido}" style="color: #666; text-decoration: none;">${emailValido}</a>`);
+        }
     }
     
     if (data.website) {
-        let websiteUrl = data.website;
-        let websiteText = data.website;
-        
-        // Si no tiene protocolo, agregarlo
-        if (!websiteUrl.startsWith('http://') && !websiteUrl.startsWith('https://')) {
-            websiteUrl = 'https://' + websiteUrl;
+        let websiteUrl = validarURL(data.website);
+        if (websiteUrl) {
+            let websiteText = escapeHTML(data.website.replace(/^https?:\/\//, '').replace(/^www\./, ''));
+            contactInfo.push(`<a href="${websiteUrl}" style="color: ${escapeHTML(data.colorPrincipal)}; font-weight: bold; text-decoration: none;">${websiteText}</a>`);
         }
-        
-        // Limpiar el texto mostrado
-        websiteText = websiteText.replace(/^https?:\/\//, '').replace(/^www\./, '');
-        
-        contactInfo.push(`<a href="${websiteUrl}" style="color: ${data.colorPrincipal}; font-weight: bold; text-decoration: none;">${websiteText}</a>`);
     }
     
     // Estructura de tabla compatible con Gmail, iCloud, Outlook y otros clientes de correo
+    const fotoUrl = escapeHTML(data.foto);
+    const colorPrincipal = escapeHTML(data.colorPrincipal);
+    const colorTexto = escapeHTML(data.colorTexto);
+    const nombre = escapeHTML(data.nombre);
     return `
     <table cellpadding="0" cellspacing="0" border="0" style="font-family: Arial, sans-serif; font-size: 14px; line-height: 1.4; border-collapse: collapse; max-width: 600px; width: auto;">
         <tr>
             <td style="vertical-align: middle; padding-right: 15px; text-align: center;">
                 <!-- Foto de perfil centrada -->
-                <img src="${data.foto}" 
-                     alt="${data.nombre}" 
+                <img src="${fotoUrl}" 
+                     alt="${nombre}" 
                      width="80" 
                      height="80" 
-                     style="border-radius: 40px; display: block; border: 3px solid ${data.colorPrincipal}; margin: 0 auto;"
+                     style="border-radius: 40px; display: block; border: 3px solid ${colorPrincipal}; margin: 0 auto;"
                 >
             </td>
-            <td width="4" style="background-color: ${data.colorPrincipal}; padding: 0; width: 4px; min-width: 4px; max-width: 4px;"></td>
+            <td width="4" style="background-color: ${colorPrincipal}; padding: 0; width: 4px; min-width: 4px; max-width: 4px;"></td>
             <td style="vertical-align: middle; padding-left: 15px;">
                 <!-- Contenedor con fondo y bordes redondeados -->
-                <table cellpadding="0" cellspacing="0" border="0" style="background-color: #fafafa; border: 2px solid ${data.colorPrincipal}; border-radius: 12px; width: 100%; min-width: 280px;">
+                <table cellpadding="0" cellspacing="0" border="0" style="background-color: #fafafa; border: 2px solid ${colorPrincipal}; border-radius: 12px; width: 100%; min-width: 280px;">
                     <tr>
                         <td style="padding: 15px 20px;">
                             <!-- Información principal -->
                             <table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
                                 <tr>
                                     <td style="padding-bottom: 8px;">
-                                        <strong style="font-size: 18px; color: ${data.colorTexto}; font-weight: 700; margin: 0; display: block;">${data.nombre}</strong>
+                                        <strong style="font-size: 18px; color: ${colorTexto}; font-weight: 700; margin: 0; display: block;">${nombre}</strong>
                                     </td>
                                 </tr>
                                 ${contactInfo.map(info => `
@@ -180,27 +237,42 @@ function generarFirmaHTML(data, socialesActivos) {
 function generarFirmaSimpleGmail(data, socialesActivos) {
     let socialLinks = '';
     for(let social in socialesActivos) {
-        socialLinks += `<a href="${socialesActivos[social].url}" style="color: ${data.colorPrincipal}; text-decoration: none; margin-right: 10px;">${social.charAt(0).toUpperCase() + social.slice(1)}</a>`;
+        const url = validarURL(socialesActivos[social].url);
+        const socialName = escapeHTML(social.charAt(0).toUpperCase() + social.slice(1));
+        if (url) {
+            socialLinks += `<a href="${url}" style="color: ${escapeHTML(data.colorPrincipal)}; text-decoration: none; margin-right: 10px;">${socialName}</a>`;
+        }
     }
+    
+    const fotoUrl = escapeHTML(data.foto);
+    const colorPrincipal = escapeHTML(data.colorPrincipal);
+    const colorTexto = escapeHTML(data.colorTexto);
+    const nombre = escapeHTML(data.nombre);
+    const titulo = escapeHTML(data.titulo);
+    const empresa = escapeHTML(data.empresa);
+    const telValido = validarTelefono(data.telefono);
+    const emailValido = validarEmail(data.email);
+    const websiteValido = validarURL(data.website);
+    const websiteText = escapeHTML(data.website.replace(/^https?:\/\//, '').replace(/^www\./, ''));
     
     return `
     <table cellpadding="0" cellspacing="0" border="0" style="font-family: Arial, sans-serif; font-size: 14px; line-height: 1.4; border-collapse: collapse; max-width: 500px;">
         <tr>
             <td style="padding-right: 15px; vertical-align: middle; text-align: center;">
-                <img src="${data.foto}" width="60" height="60" style="border-radius: 30px; border: 2px solid ${data.colorPrincipal}; display: block; margin: 0 auto;">
+                <img src="${fotoUrl}" width="60" height="60" alt="${nombre}" style="border-radius: 30px; border: 2px solid ${colorPrincipal}; display: block; margin: 0 auto;">
             </td>
-            <td width="3" style="background-color: ${data.colorPrincipal}; width: 3px; min-width: 3px;"></td>
+            <td width="3" style="background-color: ${colorPrincipal}; width: 3px; min-width: 3px;"></td>
             <td style="vertical-align: middle; padding-left: 15px;">
-                <table cellpadding="0" cellspacing="0" border="0" style="background-color: #f9f9f9; border: 1px solid ${data.colorPrincipal}; border-radius: 8px; width: 100%;">
+                <table cellpadding="0" cellspacing="0" border="0" style="background-color: #f9f9f9; border: 1px solid ${colorPrincipal}; border-radius: 8px; width: 100%;">
                     <tr>
                         <td style="padding: 12px 16px;">
-                            <div style="font-weight: bold; font-size: 16px; color: ${data.colorTexto}; margin-bottom: 5px;">${data.nombre}</div>
-                            <div style="color: #666; margin-bottom: 3px;">${data.titulo}</div>
-                            ${data.empresa ? `<div style="color: #666; margin-bottom: 3px;">${data.empresa}</div>` : ''}
-                            ${data.telefono ? `<div style="margin-bottom: 3px;"><a href="tel:${data.telefono}" style="color: #666; text-decoration: none;">${data.telefono}</a></div>` : ''}
-                            ${data.email ? `<div style="margin-bottom: 3px;"><a href="mailto:${data.email}" style="color: #666; text-decoration: none;">${data.email}</a></div>` : ''}
-                            ${data.website ? `<div style="margin-bottom: 8px;"><a href="${data.website}" style="color: ${data.colorPrincipal}; text-decoration: none; font-weight: bold;">${data.website.replace(/^https?:\/\//, '').replace(/^www\./, '')}</a></div>` : ''}
-                            ${socialLinks ? `<div style="border-top: 1px solid ${data.colorPrincipal}; padding-top: 8px; margin-top: 8px; opacity: 0.8;">${socialLinks}</div>` : ''}
+                            <div style="font-weight: bold; font-size: 16px; color: ${colorTexto}; margin-bottom: 5px;">${nombre}</div>
+                            <div style="color: #666; margin-bottom: 3px;">${titulo}</div>
+                            ${empresa ? `<div style="color: #666; margin-bottom: 3px;">${empresa}</div>` : ''}
+                            ${telValido ? `<div style="margin-bottom: 3px;"><a href="tel:${telValido}" style="color: #666; text-decoration: none;">${telValido}</a></div>` : ''}
+                            ${emailValido ? `<div style="margin-bottom: 3px;"><a href="mailto:${emailValido}" style="color: #666; text-decoration: none;">${emailValido}</a></div>` : ''}
+                            ${websiteValido ? `<div style="margin-bottom: 8px;"><a href="${websiteValido}" style="color: ${colorPrincipal}; text-decoration: none; font-weight: bold;">${websiteText}</a></div>` : ''}
+                            ${socialLinks ? `<div style="border-top: 1px solid ${colorPrincipal}; padding-top: 8px; margin-top: 8px; opacity: 0.8;">${socialLinks}</div>` : ''}
                         </td>
                     </tr>
                 </table>
@@ -648,9 +720,10 @@ function descargarFirma() {
     let nombreArchivo = currentSignatureData.nombre || 'firma';
     nombreArchivo = nombreArchivo
         .trim()
-        .replace(/[^a-zA-Z0-9\s]/g, '') // Remover caracteres especiales
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, '') // Remover caracteres especiales
         .replace(/\s+/g, '_') // Reemplazar espacios con guiones bajos
-        .toLowerCase();
+        .slice(0, 50); // Limitar a 50 caracteres para evitar ataques de ruta
     
     a.download = `firma_${nombreArchivo}.html`;
     document.body.appendChild(a);
@@ -853,27 +926,20 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeCheckboxStates(); // Inicializar estados visuales
     actualizarVistaPrevia();
     
-    // Agregar funciones de debug al objeto global para pruebas
-    window.debugCheckboxStates = debugCheckboxStates;
-    window.testearAnomaliasBotones = testearAnomaliasBotones;
+    // NOTA: Las funciones de debug (debugCheckboxStates, testearAnomaliasBotones) no se exponen
+    // en producción por razones de seguridad. Están disponibles localmente durante desarrollo.
     
     console.log('🎨 Generador de Firma de Correo inicializado correctamente');
     console.log('📝 Completa el formulario para generar tu firma personalizada');
-    console.log('🔧 Para depurar botones, ejecuta: debugCheckboxStates()');
-    console.log('🔍 Para probar anomalías, ejecuta: testearAnomaliasBotones()');
-    
-    // Ejecutar prueba automática de anomalías tras la inicialización
-    setTimeout(() => {
-        console.log('\n⏱️ Ejecutando prueba automática de anomalías...');
-        testearAnomaliasBotones();
-    }, 1000);
 });
 
 // === MEJORAS ESPECÍFICAS PARA MÓVILES ===
 
 // Función para detectar si es un dispositivo móvil
 function esDispositivoMovil() {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+    // Sanitizar userAgent para evitar problemas
+    const ua = navigator.userAgent || '';
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua) ||
            window.innerWidth <= 768;
 }
 
